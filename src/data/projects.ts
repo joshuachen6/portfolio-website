@@ -25,11 +25,11 @@ export const projects: Project[] = [
     category: 'Algorithms',
   },
   {
-    id: 'vision-system',
-    title: 'Autonomous Vision',
-    description: 'Computer vision pipeline for object detection and tracking in dynamic environments. Leverages OpenCV for high-speed image processing and spatial awareness.',
-    tags: ['Python', 'OpenCV', 'Computer Vision', 'AI'],
-    githubUrl: 'https://github.com/joshuachen6',
+    id: 'event-vision',
+    title: 'Event Camera Vision',
+    description: 'Neuromorphic computer vision research focused on processing high-frequency event streams. Developing sparse data algorithms for sub-millisecond motion analysis.',
+    tags: ['C++', 'Event-Based', 'Vision', 'Neuromorphic'],
+    githubUrl: 'https://github.com/joshuachen6/EventBasedSplitter',
     category: 'Vision',
   },
   {
@@ -37,7 +37,7 @@ export const projects: Project[] = [
     title: 'Raycasting Engine',
     description: 'Custom 3D rendering engine implementing DDA algorithms for real-time perspective projection. Optimizes software-based texture mapping and depth buffering.',
     tags: ['C++', 'Graphics', 'Mathematics', 'Rendering'],
-    githubUrl: 'https://github.com/joshuachen6',
+    githubUrl: 'https://github.com/joshuachen6/NewRayCast',
     category: 'Graphics',
   },
   {
