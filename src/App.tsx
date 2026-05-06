@@ -5,180 +5,118 @@ import { projects } from './data/projects';
 
 function App() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const lastMousePos = useRef({ x: 0, y: 0 });
-  
+  const blobs = useRef<{ x: number, y: number, r: number, opacity: number }[]>([]);
+
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    // Scale settings
-    const ratio = 4; // Balanced ratio for better wave scale
-    let width = Math.floor(window.innerWidth / ratio);
-    let height = Math.floor(window.innerHeight / ratio);
-    let size = width * height;
-    
-    let buffer1 = new Int32Array(size);
-    let buffer2 = new Int32Array(size);
-    
-    const offscreenCanvas = document.createElement('canvas');
-    const offscreenCtx = offscreenCanvas.getContext('2d')!;
-
     const resize = () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
-      width = Math.floor(window.innerWidth / ratio);
-      height = Math.floor(window.innerHeight / ratio);
-      size = width * height;
-      buffer1 = new Int32Array(size);
-      buffer2 = new Int32Array(size);
-      offscreenCanvas.width = width;
-      offscreenCanvas.height = height;
     };
-
     window.addEventListener('resize', resize);
     resize();
 
-    const line = (x0: number, y0: number, x1: number, y1: number, strength: number) => {
-      const dx = Math.abs(x1 - x0);
-      const dy = Math.abs(y1 - y0);
-      const sx = (x0 < x1) ? 1 : -1;
-      const sy = (y0 < y1) ? 1 : -1;
-      let err = dx - dy;
-
-      while (true) {
-        const index = y0 * width + x0;
-        if (index >= 0 && index < size) {
-          buffer1[index] += strength;
-        }
-
-        if (x0 === x1 && y0 === y1) break;
-        const e2 = 2 * err;
-        if (e2 > -dy) { err -= dy; x0 += sx; }
-        if (e2 < dx) { err += dx; y0 += sy; }
-      }
-    };
-
-    const update = () => {
-      for (let i = width; i < size - width; i++) {
-        buffer2[i] = ((buffer1[i - 1] + buffer1[i + 1] + buffer1[i - width] + buffer1[i + width]) >> 1) - buffer2[i];
-        buffer2[i] -= buffer2[i] >> 6;
-      }
-      const temp = buffer1;
-      buffer1 = buffer2;
-      buffer2 = temp;
-    };
-
-    const render = () => {
-      const currentImgData = offscreenCtx.createImageData(width, height);
-      const view = new Uint32Array(currentImgData.data.buffer);
-      
-      for (let i = 0; i < size; i++) {
-        const b1 = buffer1[i];
-        const dx = buffer1[i + 1] - buffer1[i - 1];
-        const dy = buffer1[i + width] - buffer1[i - width];
-        const specular = (dx + dy) >> 1;
-        
-        const alpha = Math.min(255, Math.max(0, (Math.abs(b1) >> 3) + specular + 30));
-        
-        if (alpha > 5) {
-          const intensity = Math.min(255, alpha);
-          // ABGR format for cyan
-          view[i] = (intensity << 24) | (255 << 16) | (242 << 8) | 0;
-        } else {
-          view[i] = 0;
-        }
-      }
-      
-      offscreenCtx.putImageData(currentImgData, 0, 0);
-      
+    const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.globalCompositeOperation = 'screen';
-      ctx.imageSmoothingEnabled = true;
-      // ONLY draw the scaled version
-      ctx.drawImage(offscreenCanvas, 0, 0, width, height, 0, 0, canvas.width, canvas.height);
+      
+      // Blobs will naturally merge due to the CSS filter in index.css
+      blobs.current.forEach((blob, index) => {
+        ctx.beginPath();
+        ctx.arc(blob.x, blob.y, blob.r, 0, Math.PI * 2);
+        // We draw white blobs; the CSS contrast filter creates the liquid look
+        ctx.fillStyle = `rgba(255, 255, 255, ${blob.opacity})`;
+        ctx.fill();
+        
+        // Liquid behavior: blobs expand slightly then fade away
+        blob.r += 0.5;
+        blob.opacity -= 0.015;
+        
+        if (blob.opacity <= 0) {
+          blobs.current.splice(index, 1);
+        }
+      });
+      
+      requestAnimationFrame(animate);
     };
-
-    let animId: number;
-    const loop = () => {
-      update();
-      render();
-      animId = requestAnimationFrame(loop);
-    };
-
-    loop();
+    animate();
 
     const handleMouseMove = (e: MouseEvent) => {
-      const x = (e.clientX / ratio) | 0;
-      const y = (e.clientY / ratio) | 0;
-      const lx = (lastMousePos.current.x / ratio) | 0;
-      const ly = (lastMousePos.current.y / ratio) | 0;
-      
-      line(lx, ly, x, y, 800);
-      lastMousePos.current = { x: e.clientX, y: e.clientY };
+      // Create a blob at mouse position
+      blobs.current.push({
+        x: e.clientX,
+        y: e.clientY,
+        r: 30, // Large base radius for convex merging
+        opacity: 0.6
+      });
     };
 
     window.addEventListener('mousemove', handleMouseMove);
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('resize', resize);
-      cancelAnimationFrame(animId);
     };
   }, []);
 
   return (
     <>
       <div className="bg-mesh" />
-      <canvas ref={canvasRef} className="ripple-canvas" />
+      
+      {/* Liquid Meta-Surface */}
+      <div className="liquid-container">
+        <canvas ref={canvasRef} className="liquid-canvas" />
+      </div>
       
       {/* Hero Section */}
       <header style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', position: 'relative' }}>
         <div className="container">
-          <div style={{ maxWidth: '900px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '2rem' }}>
-              <Sparkles size={18} color="var(--accent-cyan)" />
+          <div style={{ maxWidth: '1000px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', marginBottom: '2.5rem' }}>
+              <Sparkles size={20} color="var(--accent-cyan)" />
               <span style={{ 
-                fontSize: '0.9rem', 
-                fontWeight: 700, 
+                fontSize: '0.95rem', 
+                fontWeight: 800, 
                 color: 'var(--accent-cyan)',
                 textTransform: 'uppercase',
-                letterSpacing: '0.2em'
+                letterSpacing: '0.25em'
               }}>
                 Engineering the next generation
               </span>
             </div>
             
-            <h1 style={{ fontSize: 'clamp(4rem, 12vw, 8rem)', lineHeight: 0.85, fontWeight: 900, marginBottom: '2.5rem', color: '#fff', letterSpacing: '-0.06em' }}>
+            <h1 style={{ fontSize: 'clamp(4.5rem, 14vw, 9rem)', lineHeight: 0.8, fontWeight: 900, marginBottom: '3rem', color: '#fff', letterSpacing: '-0.07em' }}>
               Joshua <br/>
               <span style={{ 
-                background: 'linear-gradient(to bottom, #fff 40%, var(--accent-cyan) 100%)',
+                background: 'linear-gradient(to bottom, #fff 30%, var(--accent-cyan) 100%)',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
                 display: 'inline-block'
               }}>Chen</span>
             </h1>
             
-            <p style={{ fontSize: 'clamp(1.25rem, 3vw, 1.75rem)', color: 'var(--text-dim)', marginBottom: '3.5rem', maxWidth: '750px', fontWeight: 400, lineHeight: 1.5 }}>
+            <p style={{ fontSize: 'clamp(1.4rem, 3.5vw, 2rem)', color: 'var(--text-dim)', marginBottom: '4rem', maxWidth: '850px', fontWeight: 400, lineHeight: 1.4, letterSpacing: '-0.02em' }}>
               Computer Science + Bio-engineering @ <strong>UIUC</strong>. <br/>
-              Architecting high-performance systems and algorithms.
+              Designing high-performance systems and intelligent algorithms.
             </p>
             
-            <div style={{ display: 'flex', gap: '3rem', marginBottom: '4rem', color: '#fff', fontSize: '1.1rem', fontWeight: 600 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                <GraduationCap size={24} color="var(--accent-cyan)" /> UIUC
+            <div style={{ display: 'flex', gap: '4rem', marginBottom: '5rem', color: '#fff', fontSize: '1.2rem', fontWeight: 600 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
+                <GraduationCap size={28} color="var(--accent-cyan)" /> UIUC
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                <MapPin size={24} color="var(--accent-purple)" /> Illinois
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
+                <MapPin size={28} color="var(--accent-purple)" /> Illinois
               </div>
             </div>
 
-            <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', gap: '2rem', flexWrap: 'wrap' }}>
               <a href="#projects" className="btn-primary">
-                Explore Work <ArrowRight size={20} />
+                Explore Work <ArrowRight size={22} />
               </a>
-              <a href="mailto:jhc3628@gmail.com" className="glass-card" style={{ padding: '1rem 2.2rem', textDecoration: 'none', color: '#fff', display: 'flex', alignItems: 'center', gap: '0.75rem', fontWeight: 700, borderRadius: '14px' }}>
-                <Mail size={20} /> Contact
+              <a href="mailto:jhc3628@gmail.com" className="glass-card" style={{ padding: '1.2rem 2.6rem', textDecoration: 'none', color: '#fff', display: 'flex', alignItems: 'center', gap: '0.8rem', fontWeight: 800, borderRadius: '18px', border: '1px solid rgba(255,255,255,0.1)' }}>
+                <Mail size={22} /> Contact
               </a>
             </div>
           </div>
@@ -186,21 +124,21 @@ function App() {
       </header>
 
       {/* Focus Area */}
-      <section style={{ padding: '8rem 0' }}>
+      <section style={{ padding: '10rem 0' }}>
         <div className="container">
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '3rem' }}>
-            <div className="glass-card" style={{ padding: '3.5rem' }}>
-              <Terminal size={48} color="var(--accent-cyan)" style={{ marginBottom: '2rem' }} />
-              <h3 style={{ fontSize: '1.75rem', marginBottom: '1.25rem', color: '#fff', fontWeight: 800 }}>Systems & Graphics</h3>
-              <p style={{ color: 'var(--text-dim)', fontSize: '1.1rem', lineHeight: 1.7 }}>
-                Focusing on low-level optimization and real-time rendering. Building robust foundations for complex software ecosystems.
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))', gap: '4rem' }}>
+            <div className="glass-card" style={{ padding: '4rem' }}>
+              <Terminal size={56} color="var(--accent-cyan)" style={{ marginBottom: '2.5rem' }} />
+              <h3 style={{ fontSize: '2rem', marginBottom: '1.5rem', color: '#fff', fontWeight: 900 }}>Systems & Graphics</h3>
+              <p style={{ color: 'var(--text-dim)', fontSize: '1.15rem', lineHeight: 1.8 }}>
+                Building optimized C++ foundations and real-time visualization tools. Prioritizing efficiency, latency, and architectural elegance.
               </p>
             </div>
-            <div className="glass-card" style={{ padding: '3.5rem' }}>
-              <BrainCircuit size={48} color="var(--accent-purple)" style={{ marginBottom: '2rem' }} />
-              <h3 style={{ fontSize: '1.75rem', marginBottom: '1.25rem', color: '#fff', fontWeight: 800 }}>Search & Intelligence</h3>
-              <p style={{ color: 'var(--text-dim)', fontSize: '1.1rem', lineHeight: 1.7 }}>
-                Exploring the frontiers of heuristic search and reinforcement learning. Creating agents that can solve complex state-spaces.
+            <div className="glass-card" style={{ padding: '4rem' }}>
+              <BrainCircuit size={56} color="var(--accent-purple)" style={{ marginBottom: '2.5rem' }} />
+              <h3 style={{ fontSize: '2rem', marginBottom: '1.5rem', color: '#fff', fontWeight: 900 }}>Search & Intelligence</h3>
+              <p style={{ color: 'var(--text-dim)', fontSize: '1.15rem', lineHeight: 1.8 }}>
+                Implementing advanced heuristic search and reinforcement learning models. Navigating complex state-spaces with mathematical precision.
               </p>
             </div>
           </div>
@@ -208,16 +146,16 @@ function App() {
       </section>
 
       {/* Projects Section */}
-      <section id="projects" style={{ padding: '8rem 0' }}>
+      <section id="projects" style={{ padding: '10rem 0' }}>
         <div className="container">
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '5rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '6rem' }}>
             <h2 className="section-title" style={{ marginBottom: 0 }}>Selected <br/>Works</h2>
-            <div style={{ color: 'var(--accent-cyan)', fontSize: '1rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.2em' }}>
+            <div style={{ color: 'var(--accent-cyan)', fontSize: '1.1rem', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.3em' }}>
               06 — Featured
             </div>
           </div>
           
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))', gap: '2.5rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(380px, 1fr))', gap: '3rem' }}>
             {projects.map(project => (
               <ProjectCard key={project.id} project={project} />
             ))}
@@ -226,45 +164,40 @@ function App() {
       </section>
 
       {/* Footer */}
-      <footer style={{ padding: '10rem 0 5rem', borderTop: '1px solid var(--card-border)' }}>
+      <footer style={{ padding: '12rem 0 6rem', borderTop: '1px solid rgba(255,255,255,0.05)', background: 'linear-gradient(to bottom, transparent, rgba(0,242,255,0.01))' }}>
         <div className="container">
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '5rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '6rem' }}>
             <div>
-              <h3 style={{ fontSize: '3rem', fontWeight: 900, color: '#fff', letterSpacing: '-0.05em', marginBottom: '1.5rem', lineHeight: 1 }}>
-                Let's start <br/> the <span style={{ color: 'var(--accent-cyan)' }}>conversation</span>.
+              <h3 style={{ fontSize: '4rem', fontWeight: 900, color: '#fff', letterSpacing: '-0.06em', marginBottom: '2rem', lineHeight: 1 }}>
+                Let's build <br/> the <span style={{ color: 'var(--accent-cyan)' }}>future</span>.
               </h3>
-              <p style={{ color: 'var(--text-dim)', fontSize: '1.1rem', maxWidth: '450px' }}>
-                Currently based in Illinois. Open to discussions on systems, graphics, and robotics.
+              <p style={{ color: 'var(--text-dim)', fontSize: '1.25rem', maxWidth: '500px' }}>
+                Currently in Illinois. Looking for high-impact software engineering opportunities.
               </p>
             </div>
             
-            <div style={{ display: 'flex', gap: '4rem' }}>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-                <span style={{ fontSize: '0.8rem', fontWeight: 900, textTransform: 'uppercase', color: 'var(--accent-cyan)', letterSpacing: '0.1em' }}>Social</span>
-                <a href="https://github.com/joshuachen6" target="_blank" rel="noopener noreferrer" style={{ color: '#fff', textDecoration: 'none', fontWeight: 700, fontSize: '1.1rem' }}>GitHub</a>
-                <a href="#" style={{ color: '#fff', textDecoration: 'none', fontWeight: 700, fontSize: '1.1rem' }}>LinkedIn</a>
+            <div style={{ display: 'flex', gap: '5rem' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                <span style={{ fontSize: '0.9rem', fontWeight: 900, textTransform: 'uppercase', color: 'var(--accent-cyan)', letterSpacing: '0.15em' }}>Social</span>
+                <a href="https://github.com/joshuachen6" target="_blank" rel="noopener noreferrer" style={{ color: '#fff', textDecoration: 'none', fontWeight: 800, fontSize: '1.2rem' }}>GitHub</a>
+                <a href="#" style={{ color: '#fff', textDecoration: 'none', fontWeight: 800, fontSize: '1.2rem' }}>LinkedIn</a>
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-                <span style={{ fontSize: '0.8rem', fontWeight: 900, textTransform: 'uppercase', color: 'var(--accent-purple)', letterSpacing: '0.1em' }}>Contact</span>
-                <a href="mailto:jhc3628@gmail.com" style={{ color: '#fff', textDecoration: 'none', fontWeight: 700, fontSize: '1.1rem' }}>Email</a>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                <span style={{ fontSize: '0.9rem', fontWeight: 900, textTransform: 'uppercase', color: 'var(--accent-purple)', letterSpacing: '0.15em' }}>Contact</span>
+                <a href="mailto:jhc3628@gmail.com" style={{ color: '#fff', textDecoration: 'none', fontWeight: 800, fontSize: '1.2rem' }}>Email</a>
               </div>
             </div>
           </div>
           
-          <div style={{ marginTop: '8rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: 'rgba(255,255,255,0.3)', fontSize: '0.8rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.2em' }}>
+          <div style={{ marginTop: '10rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: 'rgba(255,255,255,0.3)', fontSize: '0.9rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.3em' }}>
             <span>&copy; {new Date().getFullYear()} Joshua Chen</span>
-            <span style={{ color: 'var(--accent-cyan)' }}>UIUC CS + Bio-E</span>
+            <span style={{ color: 'var(--accent-cyan)' }}>CS + Bio-E @ UIUC</span>
           </div>
         </div>
       </footer>
 
       <style>{`
         html { scroll-behavior: smooth; }
-        @keyframes bounce {
-          0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
-          40% {transform: translateY(-15px);}
-          60% {transform: translateY(-8px);}
-        }
       `}</style>
     </>
   );
