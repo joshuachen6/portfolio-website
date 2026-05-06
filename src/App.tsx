@@ -1,4 +1,4 @@
-import { Mail, Github, Linkedin, Cpu, Code, Database, ChevronDown } from 'lucide-react';
+import { Mail, Github, Linkedin, Cpu, Code, Database, ChevronDown, GraduationCap, MapPin } from 'lucide-react';
 import ProjectCard from './components/ProjectCard';
 import { projects } from './data/projects';
 
@@ -10,23 +10,35 @@ function App() {
       {/* Hero Section */}
       <header style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', position: 'relative' }}>
         <div className="container">
-          <div style={{ maxWidth: '700px' }}>
-            <h2 style={{ color: 'var(--accent-cyan)', fontWeight: 500, marginBottom: '1rem', letterSpacing: '2px', textTransform: 'uppercase', fontSize: '1rem' }}>
-              Software Engineer & Robotics Enthusiast
-            </h2>
-            <h1 style={{ fontSize: 'clamp(3rem, 8vw, 5rem)', lineHeight: 1.1, fontWeight: 800, marginBottom: '1.5rem' }}>
-              Building the <span style={{ color: 'var(--accent-cyan)' }}>future</span> of autonomous systems.
-            </h1>
-            <p style={{ fontSize: '1.25rem', color: 'var(--text-dim)', marginBottom: '2.5rem', maxWidth: '600px' }}>
-              Hi, I'm Joshua Chen. I specialize in C++, robotics, and building tools that bridge the gap between software and the physical world.
-            </p>
-            <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-              <a href="#projects" className="btn-primary">
-                View My Work
-              </a>
-              <a href="mailto:jhc3628@gmail.com" className="glass-card" style={{ padding: '0.75rem 1.5rem', textDecoration: 'none', color: '#fff', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <Mail size={18} /> Get in Touch
-              </a>
+          <div style={{ maxWidth: '800px', margin: '0 auto', textAlign: 'center' }}>
+            <div className="glass-card" style={{ padding: '3rem', marginBottom: '2rem' }}>
+              <h2 style={{ color: 'var(--accent-blue)', fontWeight: 600, marginBottom: '1rem', letterSpacing: '1px', textTransform: 'uppercase', fontSize: '1rem' }}>
+                Computer Science + Bio-engineering
+              </h2>
+              <h1 style={{ fontSize: 'clamp(2.5rem, 6vw, 4.5rem)', lineHeight: 1.1, fontWeight: 300, marginBottom: '1.5rem', color: 'var(--text-main)' }}>
+                Building the <span style={{ color: 'var(--accent-blue)', fontWeight: 500 }}>future</span> of robotics.
+              </h1>
+              <p style={{ fontSize: '1.2rem', color: 'var(--text-dim)', marginBottom: '2rem', maxWidth: '650px', margin: '0 auto 2.5rem', fontWeight: 400 }}>
+                Hi, I'm Joshua Chen. I'm a student at <strong>UIUC</strong> focused on Computer Graphics, Robotics, and high-performance software systems.
+              </p>
+              
+              <div style={{ display: 'flex', justifyContent: 'center', gap: '2rem', marginBottom: '2.5rem', color: 'var(--text-dim)', fontSize: '0.95rem' }}>
+                <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <GraduationCap size={18} /> UIUC
+                </span>
+                <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <MapPin size={18} /> Illinois, USA
+                </span>
+              </div>
+
+              <div style={{ display: 'flex', gap: '1.25rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+                <a href="#projects" className="btn-primary">
+                  View Projects
+                </a>
+                <a href="mailto:jhc3628@gmail.com" className="glass-card" style={{ padding: '0.8rem 1.8rem', textDecoration: 'none', color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '0.6rem', border: '1px solid rgba(0,0,0,0.05)' }}>
+                  <Mail size={18} /> Contact Me
+                </a>
+              </div>
             </div>
           </div>
         </div>
@@ -35,34 +47,40 @@ function App() {
         </div>
       </header>
 
-      {/* Stats/Icons Section */}
-      <section style={{ padding: '5rem 0' }}>
+      {/* Skills Section */}
+      <section style={{ padding: '2rem 0 5rem' }}>
         <div className="container">
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '2rem' }}>
-            <div className="glass-card" style={{ padding: '2rem', textAlign: 'center' }}>
-              <Cpu size={40} color="var(--accent-cyan)" style={{ marginBottom: '1rem' }} />
-              <h3 style={{ marginBottom: '0.5rem' }}>Robotics</h3>
-              <p style={{ color: 'var(--text-dim)', fontSize: '0.9rem' }}>Path planning & Control</p>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '2.5rem' }}>
+            <div className="glass-card" style={{ padding: '2.5rem', textAlign: 'center' }}>
+              <div style={{ background: 'rgba(0, 120, 215, 0.1)', width: '70px', height: '70px', borderRadius: '18px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem' }}>
+                <Cpu size={36} color="var(--accent-blue)" />
+              </div>
+              <h3 style={{ marginBottom: '0.75rem', fontWeight: 500 }}>Robotics</h3>
+              <p style={{ color: 'var(--text-dim)', fontSize: '0.95rem' }}>Autonomous path planning and control systems for complex environments.</p>
             </div>
-            <div className="glass-card" style={{ padding: '2rem', textAlign: 'center' }}>
-              <Code size={40} color="var(--accent-purple)" style={{ marginBottom: '1rem' }} />
-              <h3 style={{ marginBottom: '0.5rem' }}>Systems</h3>
-              <p style={{ color: 'var(--text-dim)', fontSize: '0.9rem' }}>High-performance C++</p>
+            <div className="glass-card" style={{ padding: '2.5rem', textAlign: 'center' }}>
+              <div style={{ background: 'rgba(75, 181, 255, 0.1)', width: '70px', height: '70px', borderRadius: '18px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem' }}>
+                <Code size={36} color="var(--accent-light)" />
+              </div>
+              <h3 style={{ marginBottom: '0.75rem', fontWeight: 500 }}>Systems</h3>
+              <p style={{ color: 'var(--text-dim)', fontSize: '0.95rem' }}>High-performance C++ applications with a focus on efficiency and scalability.</p>
             </div>
-            <div className="glass-card" style={{ padding: '2rem', textAlign: 'center' }}>
-              <Database size={40} color="var(--accent-cyan)" style={{ marginBottom: '1rem' }} />
-              <h3 style={{ marginBottom: '0.5rem' }}>Tools</h3>
-              <p style={{ color: 'var(--text-dim)', fontSize: '0.9rem' }}>Developer productivity</p>
+            <div className="glass-card" style={{ padding: '2.5rem', textAlign: 'center' }}>
+              <div style={{ background: 'rgba(0, 120, 215, 0.1)', width: '70px', height: '70px', borderRadius: '18px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem' }}>
+                <Database size={36} color="var(--accent-blue)" />
+              </div>
+              <h3 style={{ marginBottom: '0.75rem', fontWeight: 500 }}>Bio-E</h3>
+              <p style={{ color: 'var(--text-dim)', fontSize: '0.95rem' }}>Integrating computational methods with bio-engineering challenges.</p>
             </div>
           </div>
         </div>
       </section>
 
       {/* Projects Section */}
-      <section id="projects" style={{ padding: '5rem 0' }}>
+      <section id="projects" style={{ padding: '6rem 0' }}>
         <div className="container">
-          <h2 className="section-title">Featured Projects</h2>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '2rem' }}>
+          <h2 className="section-title">Selected Works</h2>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: '2.5rem' }}>
             {projects.map(project => (
               <ProjectCard key={project.id} project={project} />
             ))}
@@ -71,22 +89,22 @@ function App() {
       </section>
 
       {/* Footer */}
-      <footer style={{ padding: '5rem 0 3rem', borderTop: '1px solid var(--card-border)' }}>
+      <footer style={{ padding: '6rem 0 3rem', background: 'rgba(255,255,255,0.3)', backdropFilter: 'blur(10px)', borderTop: '1px solid var(--card-border)' }}>
         <div className="container">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '2rem' }}>
             <div>
-              <h3 style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>Joshua Chen</h3>
-              <p style={{ color: 'var(--text-dim)' }}>&copy; {new Date().getFullYear()} All rights reserved.</p>
+              <h3 style={{ fontSize: '1.6rem', marginBottom: '0.5rem', fontWeight: 500 }}>Joshua Chen</h3>
+              <p style={{ color: 'var(--text-dim)', fontSize: '0.9rem' }}>&copy; {new Date().getFullYear()} • CS + Bio-E at UIUC</p>
             </div>
             <div style={{ display: 'flex', gap: '1.5rem' }}>
-              <a href="https://github.com/joshuachen6" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--text-dim)', transition: 'color 0.3s ease' }} onMouseOver={(e) => e.currentTarget.style.color = 'var(--accent-cyan)'} onMouseOut={(e) => e.currentTarget.style.color = 'var(--text-dim)'}>
-                <Github size={24} />
+              <a href="https://github.com/joshuachen6" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--text-dim)', transition: 'color 0.3s ease' }}>
+                <Github size={26} />
               </a>
-              <a href="#" style={{ color: 'var(--text-dim)', transition: 'color 0.3s ease' }} onMouseOver={(e) => e.currentTarget.style.color = 'var(--accent-purple)'} onMouseOut={(e) => e.currentTarget.style.color = 'var(--text-dim)'}>
-                <Linkedin size={24} />
+              <a href="#" style={{ color: 'var(--text-dim)', transition: 'color 0.3s ease' }}>
+                <Linkedin size={26} />
               </a>
-              <a href="mailto:jhc3628@gmail.com" style={{ color: 'var(--text-dim)', transition: 'color 0.3s ease' }} onMouseOver={(e) => e.currentTarget.style.color = 'var(--accent-cyan)'} onMouseOut={(e) => e.currentTarget.style.color = 'var(--text-dim)'}>
-                <Mail size={24} />
+              <a href="mailto:jhc3628@gmail.com" style={{ color: 'var(--text-dim)', transition: 'color 0.3s ease' }}>
+                <Mail size={26} />
               </a>
             </div>
           </div>
@@ -96,8 +114,8 @@ function App() {
       <style>{`
         @keyframes bounce {
           0%, 20%, 50%, 80%, 100% {transform: translateY(0) translateX(-50%);}
-          40% {transform: translateY(-10px) translateX(-50%);}
-          60% {transform: translateY(-5px) translateX(-50%);}
+          40% {transform: translateY(-12px) translateX(-50%);}
+          60% {transform: translateY(-6px) translateX(-50%);}
         }
         html {
           scroll-behavior: smooth;
