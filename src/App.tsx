@@ -13,14 +13,22 @@ function App() {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    const ratio = 4;
-    const damping = 0.97;
+    // Optimized settings
+    const ratio = 8; // Higher ratio = much better performance
     let width = Math.floor(window.innerWidth / ratio);
     let height = Math.floor(window.innerHeight / ratio);
     let size = width * height;
     
-    let buffer1 = new Float32Array(size);
-    let buffer2 = new Float32Array(size);
+    let buffer1 = new Int32Array(size);
+    let buffer2 = new Int32Array(size);
+    let imgData = ctx.createImageData(width, height);
+    
+    // Pre-fill ImageData with cyan color, only alpha will change
+    for (let i = 0; i < size * 4; i += 4) {
+      imgData.data[i] = 0;     // R
+      imgData.data[i + 1] = 242; // G
+      imgData.data[i + 2] = 255; // B
+    }
 
     const resize = () => {
       canvas.width = window.innerWidth;
@@ -28,89 +36,67 @@ function App() {
       width = Math.floor(window.innerWidth / ratio);
       height = Math.floor(window.innerHeight / ratio);
       size = width * height;
-      buffer1 = new Float32Array(size);
-      buffer2 = new Float32Array(size);
+      buffer1 = new Int32Array(size);
+      buffer2 = new Int32Array(size);
+      imgData = ctx.createImageData(width, height);
+      for (let i = 0; i < size * 4; i += 4) {
+        imgData.data[i] = 0; imgData.data[i+1] = 242; imgData.data[i+2] = 255;
+      }
     };
 
     window.addEventListener('resize', resize);
     resize();
 
-    const rippleAt = (x: number, y: number, strength: number = 256) => {
-      const ix = Math.floor(x / ratio);
-      const iy = Math.floor(y / ratio);
-      
-      const r = 2; // brush radius
-      for (let j = -r; j <= r; j++) {
-        for (let i = -r; i <= r; i++) {
-          const tx = ix + i;
-          const ty = iy + j;
-          if (tx >= 0 && tx < width && ty >= 0 && ty < height) {
-            const d = Math.sqrt(i * i + j * j);
-            if (d < r) {
-              buffer1[ty * width + tx] += (r - d) * strength;
-            }
-          }
-        }
+    const rippleAt = (x: number, y: number) => {
+      const ix = (x / ratio) | 0;
+      const iy = (y / ratio) | 0;
+      const index = iy * width + ix;
+      if (index >= width && index < size - width) {
+        // High value for sharp "cut"
+        buffer1[index] = 1024;
       }
     };
 
     const update = () => {
+      // Optimized integer-based wave simulation
       for (let i = width; i < size - width; i++) {
-        buffer2[i] = (
-          (buffer1[i - 1] +
-            buffer1[i + 1] +
-            buffer1[i - width] +
-            buffer1[i + width]) / 2
-        ) - buffer2[i];
-        buffer2[i] *= damping;
+        buffer2[i] = ((buffer1[i - 1] + buffer1[i + 1] + buffer1[i - width] + buffer1[i + width]) >> 1) - buffer2[i];
+        buffer2[i] -= buffer2[i] >> 5; // Damping
       }
-      
-      const nextBuffer = buffer1;
+      let temp = buffer1;
       buffer1 = buffer2;
-      buffer2 = nextBuffer;
+      buffer2 = temp;
     };
 
-    const draw = () => {
-      const imgData = ctx.createImageData(width, height);
+    const render = () => {
       const data = imgData.data;
-
       for (let i = 0; i < size; i++) {
-        // Calculate gradient for lighting
-        const dx = buffer1[i + 1] - buffer1[i - 1];
-        const dy = buffer1[i + width] - buffer1[i - width];
-        
-        // Use gradient to create a "specular highlight" effect
-        const shade = dx + dy;
         const val = buffer1[i];
-        
-        const pixelIdx = i * 4;
-        
-        // Base color (Cyan/White highlight)
-        data[pixelIdx] = 0;     // R
-        data[pixelIdx + 1] = 242; // G
-        data[pixelIdx + 2] = 255; // B
-        
-        // Combine height and gradient for the alpha/brightness
-        const alpha = Math.max(0, Math.min(255, (Math.abs(val) * 0.4) + shade * 0.5));
-        data[pixelIdx + 3] = alpha;
+        // Only update alpha channel
+        const alpha = (val > 0 ? val : -val) >> 2;
+        data[i * 4 + 3] = alpha > 200 ? 200 : alpha;
       }
-
-      ctx.putImageData(imgData, 0, 0);
       
-      // Draw at full resolution with better filtering
+      // Use a temporary canvas to scale up efficiently
+      const tempCanvas = document.createElement('canvas');
+      tempCanvas.width = width;
+      tempCanvas.height = height;
+      tempCanvas.getContext('2d')?.putImageData(imgData, 0, 0);
+      
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.globalCompositeOperation = 'screen';
       ctx.imageSmoothingEnabled = true;
-      ctx.drawImage(canvas, 0, 0, width, height, 0, 0, canvas.width, canvas.height);
+      ctx.drawImage(tempCanvas, 0, 0, width, height, 0, 0, canvas.width, canvas.height);
     };
 
-    const animate = () => {
+    let animationId: number;
+    const loop = () => {
       update();
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      draw();
-      requestAnimationFrame(animate);
+      render();
+      animationId = requestAnimationFrame(loop);
     };
 
-    animate();
+    loop();
 
     const handleMouseMove = (e: MouseEvent) => {
       const x = e.clientX;
@@ -120,12 +106,12 @@ function App() {
       const dy = y - lastMousePos.current.y;
       const dist = Math.sqrt(dx * dx + dy * dy);
       
-      // Interpolate to create a continuous "cut"
-      const steps = Math.max(1, Math.floor(dist / 2));
+      // Fine-grained interpolation for a smooth "cut" line
+      const steps = Math.max(1, Math.floor(dist / 1.5));
       for (let i = 0; i < steps; i++) {
         const px = lastMousePos.current.x + (dx * i) / steps;
         const py = lastMousePos.current.y + (dy * i) / steps;
-        rippleAt(px, py, 128); // Lower strength per step for continuous feel
+        rippleAt(px, py);
       }
       
       lastMousePos.current = { x, y };
@@ -135,6 +121,7 @@ function App() {
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('resize', resize);
+      cancelAnimationFrame(animationId);
     };
   }, []);
 
