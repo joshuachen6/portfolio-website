@@ -13,22 +13,16 @@ function App() {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    // Optimized settings
-    const ratio = 8; // Higher ratio = much better performance
+    // High resolution settings
+    const ratio = 2; // Low ratio = high resolution
     let width = Math.floor(window.innerWidth / ratio);
     let height = Math.floor(window.innerHeight / ratio);
     let size = width * height;
     
     let buffer1 = new Int32Array(size);
     let buffer2 = new Int32Array(size);
-    let imgData = ctx.createImageData(width, height);
     
-    // Pre-fill ImageData with cyan color, only alpha will change
-    for (let i = 0; i < size * 4; i += 4) {
-      imgData.data[i] = 0;     // R
-      imgData.data[i + 1] = 242; // G
-      imgData.data[i + 2] = 255; // B
-    }
+    // Performance optimization: Use a 32-bit view for the ImageData buffer
 
     const resize = () => {
       canvas.width = window.innerWidth;
@@ -38,90 +32,105 @@ function App() {
       size = width * height;
       buffer1 = new Int32Array(size);
       buffer2 = new Int32Array(size);
-      imgData = ctx.createImageData(width, height);
-      for (let i = 0; i < size * 4; i += 4) {
-        imgData.data[i] = 0; imgData.data[i+1] = 242; imgData.data[i+2] = 255;
-      }
     };
 
     window.addEventListener('resize', resize);
     resize();
 
-    const rippleAt = (x: number, y: number) => {
-      const ix = (x / ratio) | 0;
-      const iy = (y / ratio) | 0;
-      const index = iy * width + ix;
-      if (index >= width && index < size - width) {
-        // High value for sharp "cut"
-        buffer1[index] = 1024;
+    // Line drawing into the heightmap to create a "slice"
+    const line = (x0: number, y0: number, x1: number, y1: number, strength: number) => {
+      const dx = Math.abs(x1 - x0);
+      const dy = Math.abs(y1 - y0);
+      const sx = (x0 < x1) ? 1 : -1;
+      const sy = (y0 < y1) ? 1 : -1;
+      let err = dx - dy;
+
+      while (true) {
+        const index = y0 * width + x0;
+        if (index >= 0 && index < size) {
+          buffer1[index] += strength;
+        }
+
+        if (x0 === x1 && y0 === y1) break;
+        const e2 = 2 * err;
+        if (e2 > -dy) { err -= dy; x0 += sx; }
+        if (e2 < dx) { err += dx; y0 += sy; }
       }
     };
 
     const update = () => {
-      // Optimized integer-based wave simulation
+      // Tight wave equation loop
       for (let i = width; i < size - width; i++) {
         buffer2[i] = ((buffer1[i - 1] + buffer1[i + 1] + buffer1[i - width] + buffer1[i + width]) >> 1) - buffer2[i];
-        buffer2[i] -= buffer2[i] >> 5; // Damping
+        buffer2[i] -= buffer2[i] >> 6; // Damping
       }
-      let temp = buffer1;
+      const temp = buffer1;
       buffer1 = buffer2;
       buffer2 = temp;
     };
 
     const render = () => {
-      const data = imgData.data;
+      const currentImgData = ctx.createImageData(width, height);
+      const view = new Uint32Array(currentImgData.data.buffer);
+      
       for (let i = 0; i < size; i++) {
-        const val = buffer1[i];
-        // Only update alpha channel
-        const alpha = (val > 0 ? val : -val) >> 2;
-        data[i * 4 + 3] = alpha > 200 ? 200 : alpha;
+        const b1 = buffer1[i];
+        
+        // Specular highlight calculation based on horizontal gradient
+        const dx = buffer1[i + 1] - buffer1[i - 1];
+        const dy = buffer1[i + width] - buffer1[i - width];
+        const specular = (dx + dy) >> 1;
+        
+        const alpha = Math.min(255, Math.max(0, (Math.abs(b1) >> 3) + specular + 20));
+        
+        // ARGB format (little-endian: ABGR)
+        // 0xAABBGGRR -> Cyan highlights (0x00F2FF)
+        // We vary the intensity based on alpha
+        if (alpha > 10) {
+          const r = Math.min(255, 0 + alpha);
+          const g = Math.min(255, 242 + alpha);
+          const b = Math.min(255, 255 + alpha);
+          view[i] = (alpha << 24) | (b << 16) | (g << 8) | r;
+        } else {
+          view[i] = 0;
+        }
       }
       
-      // Use a temporary canvas to scale up efficiently
-      const tempCanvas = document.createElement('canvas');
-      tempCanvas.width = width;
-      tempCanvas.height = height;
-      tempCanvas.getContext('2d')?.putImageData(imgData, 0, 0);
+      ctx.putImageData(currentImgData, 0, 0);
       
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      // Scale up to screen with high quality
       ctx.globalCompositeOperation = 'screen';
       ctx.imageSmoothingEnabled = true;
-      ctx.drawImage(tempCanvas, 0, 0, width, height, 0, 0, canvas.width, canvas.height);
+      ctx.drawImage(canvas, 0, 0, width, height, 0, 0, canvas.width, canvas.height);
     };
 
-    let animationId: number;
+    let animId: number;
     const loop = () => {
       update();
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
       render();
-      animationId = requestAnimationFrame(loop);
+      animId = requestAnimationFrame(loop);
     };
 
     loop();
 
     const handleMouseMove = (e: MouseEvent) => {
-      const x = e.clientX;
-      const y = e.clientY;
+      const x = (e.clientX / ratio) | 0;
+      const y = (e.clientY / ratio) | 0;
       
-      const dx = x - lastMousePos.current.x;
-      const dy = y - lastMousePos.current.y;
-      const dist = Math.sqrt(dx * dx + dy * dy);
+      const lx = (lastMousePos.current.x / ratio) | 0;
+      const ly = (lastMousePos.current.y / ratio) | 0;
       
-      // Fine-grained interpolation for a smooth "cut" line
-      const steps = Math.max(1, Math.floor(dist / 1.5));
-      for (let i = 0; i < steps; i++) {
-        const px = lastMousePos.current.x + (dx * i) / steps;
-        const py = lastMousePos.current.y + (dy * i) / steps;
-        rippleAt(px, py);
-      }
+      line(lx, ly, x, y, 512);
       
-      lastMousePos.current = { x, y };
+      lastMousePos.current = { x: e.clientX, y: e.clientY };
     };
 
     window.addEventListener('mousemove', handleMouseMove);
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('resize', resize);
-      cancelAnimationFrame(animationId);
+      cancelAnimationFrame(animId);
     };
   }, []);
 
