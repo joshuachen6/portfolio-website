@@ -4,48 +4,56 @@ export interface Project {
   description: string;
   tags: string[];
   githubUrl: string;
-  category: 'Robotics' | 'C++' | 'AI' | 'Tools' | 'Graphics';
+  category: 'Systems' | 'Algorithms' | 'AI' | 'Tools' | 'Graphics';
 }
 
 export const projects: Project[] = [
   {
     id: 'roboop-core',
     title: 'RoboOp Core',
-    description: 'High-performance C++20 robotics library featuring quintic Hermite splines, optimized motion profiling, and robust PID control systems.',
-    tags: ['C++20', 'Eigen', 'Control Theory', 'Splines'],
+    description: 'High-performance C++20 systems library for motion control and pathing. Implements quintic splines and optimized trajectory generation.',
+    tags: ['C++20', 'Eigen', 'Systems Design'],
     githubUrl: 'https://github.com/joshuachen6/RoboOpSuite',
-    category: 'Robotics',
+    category: 'Systems',
+  },
+  {
+    id: 'chess-cpp',
+    title: 'Chess Engine',
+    description: 'A custom chess engine built with bitboard representations and a minimax search algorithm. Features Alpha-Beta pruning for high-depth search.',
+    tags: ['C++', 'Bitboards', 'Minimax', 'Search'],
+    githubUrl: 'https://github.com/joshuachen6/ChessCpp',
+    category: 'Algorithms',
   },
   {
     id: 'roboop-visualizer',
     title: 'RoboOp Visualizer',
-    description: 'Interactive GUI tool for real-time path design and trajectory inspection. Built with GLFW and ImGui for low-latency feedback.',
-    tags: ['C++', 'ImGui', 'GLFW', 'Visualization'],
+    description: 'A desktop application for real-time trajectory inspection. Built with GLFW/ImGui to provide a low-latency, hardware-accelerated interface.',
+    tags: ['C++', 'OpenGL', 'ImGui', 'Visualization'],
     githubUrl: 'https://github.com/joshuachen6/RoboOpSuite',
-    category: 'Tools',
+    category: 'Graphics',
   },
   {
-    id: 'robotics-gui',
-    title: 'RoboticsGUI',
-    description: 'FTC trajectory generator that simplifies Road Runner code creation. Allows "driving" virtual robots to map paths visually.',
-    tags: ['Python', 'Pyglet', 'FTC', 'Road Runner'],
+    id: 'robotics-gui-generator',
+    title: 'Trajectory Generator',
+    description: 'Interactive tool for generating Road Runner Java code. Features a virtual driving mode to map paths with immediate code export.',
+    tags: ['Python', 'Pyglet', 'Code Generation'],
     githubUrl: 'https://github.com/joshuachen6/roboticsGUI',
     category: 'Tools',
   },
   {
-    id: 'chess-cpp',
-    title: 'ChessCpp',
-    description: 'Bitboard-based chess engine featuring Minimax search with Alpha-Beta pruning and a custom SFML/ImGui interface.',
-    tags: ['C++', 'SFML', 'Algorithms', 'Game Engine'],
-    githubUrl: 'https://github.com/joshuachen6/ChessCpp',
-    category: 'C++',
-  },
-  {
-    id: 'qlearning-tictactoe',
-    title: 'QLearning AI',
-    description: 'Exploration into reinforcement learning using libtorch to train agents for optimal decision making in game environments.',
-    tags: ['C++', 'libtorch', 'AI', 'Q-Learning'],
+    id: 'qlearning-rl',
+    title: 'Reinforcement Learning',
+    description: 'Implementation of Q-Learning agents using libtorch. Explores model-based decision making and optimal search rollouts.',
+    tags: ['C++', 'PyTorch', 'ML', 'Q-Learning'],
     githubUrl: 'https://github.com/joshuachen6/QLearning-Rollouts-TicTacToe',
     category: 'AI',
+  },
+  {
+    id: 'search-sims',
+    title: 'Heuristic Search Sims',
+    description: 'A collection of simulations testing various heuristic search algorithms across different state-space environments.',
+    tags: ['C++', 'Algorithms', 'Heuristics'],
+    githubUrl: 'https://github.com/joshuachen6/ChessCpp',
+    category: 'Algorithms',
   },
 ];
