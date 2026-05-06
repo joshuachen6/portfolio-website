@@ -5,6 +5,7 @@ import { projects } from './data/projects';
 
 function App() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const lastMousePos = useRef({ x: 0, y: 0 });
   
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -12,12 +13,11 @@ function App() {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    // Simulation settings
-    const ratio = 4; // Lower resolution for physics
-    const damping = 0.96;
+    const ratio = 4;
+    const damping = 0.97;
     let width = Math.floor(window.innerWidth / ratio);
     let height = Math.floor(window.innerHeight / ratio);
-    const size = width * height;
+    let size = width * height;
     
     let buffer1 = new Float32Array(size);
     let buffer2 = new Float32Array(size);
@@ -27,66 +27,79 @@ function App() {
       canvas.height = window.innerHeight;
       width = Math.floor(window.innerWidth / ratio);
       height = Math.floor(window.innerHeight / ratio);
-      const newSize = width * height;
-      buffer1 = new Float32Array(newSize);
-      buffer2 = new Float32Array(newSize);
+      size = width * height;
+      buffer1 = new Float32Array(size);
+      buffer2 = new Float32Array(size);
     };
 
     window.addEventListener('resize', resize);
     resize();
 
-    const ripple = (x: number, y: number) => {
+    const rippleAt = (x: number, y: number, strength: number = 256) => {
       const ix = Math.floor(x / ratio);
       const iy = Math.floor(y / ratio);
-      const index = iy * width + ix;
-      if (index >= 0 && index < size) {
-        buffer1[index] = 512;
+      
+      const r = 2; // brush radius
+      for (let j = -r; j <= r; j++) {
+        for (let i = -r; i <= r; i++) {
+          const tx = ix + i;
+          const ty = iy + j;
+          if (tx >= 0 && tx < width && ty >= 0 && ty < height) {
+            const d = Math.sqrt(i * i + j * j);
+            if (d < r) {
+              buffer1[ty * width + tx] += (r - d) * strength;
+            }
+          }
+        }
       }
     };
 
     const update = () => {
       for (let i = width; i < size - width; i++) {
-        // Basic wave equation: (neighbors / 2) - current
         buffer2[i] = (
           (buffer1[i - 1] +
             buffer1[i + 1] +
             buffer1[i - width] +
             buffer1[i + width]) / 2
         ) - buffer2[i];
-        
         buffer2[i] *= damping;
       }
       
-      // Swap buffers
       const nextBuffer = buffer1;
       buffer1 = buffer2;
       buffer2 = nextBuffer;
     };
 
     const draw = () => {
-      const imageData = ctx.createImageData(width, height);
-      const data = imageData.data;
+      const imgData = ctx.createImageData(width, height);
+      const data = imgData.data;
 
       for (let i = 0; i < size; i++) {
-        const val = buffer1[i];
-        // Create a "highlight/shadow" effect based on height gradient
-        const r = 0;
-        const g = 242;
-        const b = 255;
+        // Calculate gradient for lighting
+        const dx = buffer1[i + 1] - buffer1[i - 1];
+        const dy = buffer1[i + width] - buffer1[i - width];
         
-        const alpha = Math.min(Math.abs(val) * 0.5, 255);
+        // Use gradient to create a "specular highlight" effect
+        const shade = dx + dy;
+        const val = buffer1[i];
+        
         const pixelIdx = i * 4;
         
-        data[pixelIdx] = r;
-        data[pixelIdx + 1] = g;
-        data[pixelIdx + 2] = b;
+        // Base color (Cyan/White highlight)
+        data[pixelIdx] = 0;     // R
+        data[pixelIdx + 1] = 242; // G
+        data[pixelIdx + 2] = 255; // B
+        
+        // Combine height and gradient for the alpha/brightness
+        const alpha = Math.max(0, Math.min(255, (Math.abs(val) * 0.4) + shade * 0.5));
         data[pixelIdx + 3] = alpha;
       }
 
-      ctx.putImageData(imageData, 0, 0);
+      ctx.putImageData(imgData, 0, 0);
       
-      // Scale up the low-res physics canvas to screen size
+      // Draw at full resolution with better filtering
       ctx.globalCompositeOperation = 'screen';
+      ctx.imageSmoothingEnabled = true;
       ctx.drawImage(canvas, 0, 0, width, height, 0, 0, canvas.width, canvas.height);
     };
 
@@ -100,7 +113,22 @@ function App() {
     animate();
 
     const handleMouseMove = (e: MouseEvent) => {
-      ripple(e.clientX, e.clientY);
+      const x = e.clientX;
+      const y = e.clientY;
+      
+      const dx = x - lastMousePos.current.x;
+      const dy = y - lastMousePos.current.y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      
+      // Interpolate to create a continuous "cut"
+      const steps = Math.max(1, Math.floor(dist / 2));
+      for (let i = 0; i < steps; i++) {
+        const px = lastMousePos.current.x + (dx * i) / steps;
+        const py = lastMousePos.current.y + (dy * i) / steps;
+        rippleAt(px, py, 128); // Lower strength per step for continuous feel
+      }
+      
+      lastMousePos.current = { x, y };
     };
 
     window.addEventListener('mousemove', handleMouseMove);
