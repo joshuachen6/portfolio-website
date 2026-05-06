@@ -1,36 +1,71 @@
-import { useState, useEffect } from 'react';
-import { Mail, GraduationCap, MapPin, Terminal, BrainCircuit, Sparkles } from 'lucide-react';
+import { useEffect, useRef } from 'react';
+import { Mail, GraduationCap, MapPin, Terminal, BrainCircuit, Sparkles, ArrowRight } from 'lucide-react';
 import ProjectCard from './components/ProjectCard';
 import { projects } from './data/projects';
 
 function App() {
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const ripples = useRef<any[]>([]);
 
   useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      setMousePos({ x: e.clientX, y: e.clientY });
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const resize = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
     };
+
+    window.addEventListener('resize', resize);
+    resize();
+
+    const animate = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      ripples.current = ripples.current.filter(ripple => ripple.opacity > 0);
+      
+      ripples.current.forEach(ripple => {
+        ctx.beginPath();
+        ctx.arc(ripple.x, ripple.y, ripple.radius, 0, Math.PI * 2);
+        ctx.strokeStyle = `rgba(0, 242, 255, ${ripple.opacity})`;
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        
+        ripple.radius += 2;
+        ripple.opacity -= 0.01;
+      });
+      
+      requestAnimationFrame(animate);
+    };
+
+    animate();
+
+    const handleMouseMove = (e: MouseEvent) => {
+      if (Math.random() > 0.8) {
+        ripples.current.push({
+          x: e.clientX,
+          y: e.clientY,
+          radius: 0,
+          opacity: 0.5
+        });
+      }
+    };
+
     window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('resize', resize);
+    };
   }, []);
 
   return (
     <>
-      <div className="bg-grid" />
-      <div className="bg-grain" />
+      <div className="bg-mesh" />
+      <canvas ref={canvasRef} className="ripple-canvas" />
       
-      {/* Dynamic Cursor Glow */}
-      <div style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        width: '100%',
-        height: '100%',
-        pointerEvents: 'none',
-        zIndex: -1,
-        background: `radial-gradient(600px circle at ${mousePos.x}px ${mousePos.y}px, rgba(0, 242, 255, 0.05), transparent 80%)`
-      }} />
-
       {/* Hero Section */}
       <header style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', position: 'relative' }}>
         <div className="container">
@@ -38,7 +73,7 @@ function App() {
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '2rem' }}>
               <Sparkles size={18} color="var(--accent-cyan)" />
               <span style={{ 
-                fontSize: '0.85rem', 
+                fontSize: '0.9rem', 
                 fontWeight: 700, 
                 color: 'var(--accent-cyan)',
                 textTransform: 'uppercase',
@@ -48,55 +83,58 @@ function App() {
               </span>
             </div>
             
-            <h1 style={{ fontSize: 'clamp(3.5rem, 10vw, 7rem)', lineHeight: 0.9, fontWeight: 900, marginBottom: '2rem', color: '#fff', letterSpacing: '-0.05em' }}>
-              Joshua <span style={{ color: 'transparent', WebkitTextStroke: '1.5px rgba(255,255,255,0.8)' }}>Chen</span>
+            <h1 style={{ fontSize: 'clamp(4rem, 12vw, 8rem)', lineHeight: 0.85, fontWeight: 900, marginBottom: '2.5rem', color: '#fff', letterSpacing: '-0.06em' }}>
+              Joshua <br/>
+              <span style={{ 
+                background: 'linear-gradient(to bottom, #fff 40%, var(--accent-cyan) 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                display: 'inline-block'
+              }}>Chen</span>
             </h1>
             
-            <p style={{ fontSize: 'clamp(1.2rem, 2.5vw, 1.5rem)', color: 'var(--text-dim)', marginBottom: '3rem', maxWidth: '700px', fontWeight: 400, lineHeight: 1.5 }}>
-              Computer Science + Bio-engineering @ <strong>UIUC</strong>. 
-              Bridging the gap between software and hardware through systems, graphics, and algorithms.
+            <p style={{ fontSize: 'clamp(1.25rem, 3vw, 1.75rem)', color: 'var(--text-dim)', marginBottom: '3.5rem', maxWidth: '750px', fontWeight: 400, lineHeight: 1.5 }}>
+              Computer Science + Bio-engineering @ <strong>UIUC</strong>. <br/>
+              Architecting high-performance systems and algorithms.
             </p>
             
-            <div style={{ display: 'flex', gap: '2rem', marginBottom: '4rem' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', color: 'var(--text-dim)', fontSize: '0.9rem' }}>
-                <GraduationCap size={18} /> UIUC CS + Bio-E
+            <div style={{ display: 'flex', gap: '3rem', marginBottom: '4rem', color: '#fff', fontSize: '1.1rem', fontWeight: 600 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                <GraduationCap size={24} color="var(--accent-cyan)" /> UIUC
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', color: 'var(--text-dim)', fontSize: '0.9rem' }}>
-                <MapPin size={18} /> Illinois, USA
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                <MapPin size={24} color="var(--accent-purple)" /> Illinois
               </div>
             </div>
 
-            <div style={{ display: 'flex', gap: '1.25rem', flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap' }}>
               <a href="#projects" className="btn-primary">
-                View Work
+                Explore Work <ArrowRight size={20} />
               </a>
-              <a href="mailto:jhc3628@gmail.com" className="glass-card" style={{ padding: '0.8rem 1.8rem', textDecoration: 'none', color: '#fff', display: 'flex', alignItems: 'center', gap: '0.6rem', fontWeight: 700, borderRadius: '10px' }}>
-                <Mail size={18} /> Say Hello
+              <a href="mailto:jhc3628@gmail.com" className="glass-card" style={{ padding: '1rem 2.2rem', textDecoration: 'none', color: '#fff', display: 'flex', alignItems: 'center', gap: '0.75rem', fontWeight: 700, borderRadius: '14px' }}>
+                <Mail size={20} /> Contact
               </a>
             </div>
           </div>
         </div>
-        <div style={{ position: 'absolute', bottom: '3rem', left: '2rem', color: 'rgba(255,255,255,0.2)', writingMode: 'vertical-rl', fontSize: '0.7rem', letterSpacing: '0.2em', textTransform: 'uppercase' }}>
-          Scroll to explore
-        </div>
       </header>
 
-      {/* Philosophy Section */}
+      {/* Focus Area */}
       <section style={{ padding: '8rem 0' }}>
         <div className="container">
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '3rem' }}>
-            <div className="glass-card" style={{ padding: '3rem' }}>
-              <Terminal size={32} color="var(--accent-cyan)" style={{ marginBottom: '1.5rem' }} />
-              <h3 style={{ fontSize: '1.25rem', marginBottom: '1rem', color: '#fff', fontWeight: 800 }}>Systems Thinking</h3>
-              <p style={{ color: 'var(--text-dim)', fontSize: '0.95rem', lineHeight: 1.7 }}>
-                I build tools that prioritize performance and developer experience. From C++20 robotics libraries to interactive Python generators.
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '3rem' }}>
+            <div className="glass-card" style={{ padding: '3.5rem' }}>
+              <Terminal size={48} color="var(--accent-cyan)" style={{ marginBottom: '2rem' }} />
+              <h3 style={{ fontSize: '1.75rem', marginBottom: '1.25rem', color: '#fff', fontWeight: 800 }}>Systems & Graphics</h3>
+              <p style={{ color: 'var(--text-dim)', fontSize: '1.1rem', lineHeight: 1.7 }}>
+                Focusing on low-level optimization and real-time rendering. Building robust foundations for complex software ecosystems.
               </p>
             </div>
-            <div className="glass-card" style={{ padding: '3rem' }}>
-              <BrainCircuit size={32} color="var(--accent-purple)" style={{ marginBottom: '1.5rem' }} />
-              <h3 style={{ fontSize: '1.25rem', marginBottom: '1rem', color: '#fff', fontWeight: 800 }}>Algorithmic Depth</h3>
-              <p style={{ color: 'var(--text-dim)', fontSize: '0.95rem', lineHeight: 1.7 }}>
-                Solving complex state-space problems through heuristic search, bitboard engines, and reinforcement learning research.
+            <div className="glass-card" style={{ padding: '3.5rem' }}>
+              <BrainCircuit size={48} color="var(--accent-purple)" style={{ marginBottom: '2rem' }} />
+              <h3 style={{ fontSize: '1.75rem', marginBottom: '1.25rem', color: '#fff', fontWeight: 800 }}>Search & Intelligence</h3>
+              <p style={{ color: 'var(--text-dim)', fontSize: '1.1rem', lineHeight: 1.7 }}>
+                Exploring the frontiers of heuristic search and reinforcement learning. Creating agents that can solve complex state-spaces.
               </p>
             </div>
           </div>
@@ -106,14 +144,14 @@ function App() {
       {/* Projects Section */}
       <section id="projects" style={{ padding: '8rem 0' }}>
         <div className="container">
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '4rem' }}>
-            <h2 className="section-title" style={{ marginBottom: 0 }}>Selected <br/>Projects</h2>
-            <div style={{ color: 'var(--text-dim)', fontSize: '0.8rem', textAlign: 'right', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.1em' }}>
-              06 — Featured Works
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '5rem' }}>
+            <h2 className="section-title" style={{ marginBottom: 0 }}>Selected <br/>Works</h2>
+            <div style={{ color: 'var(--accent-cyan)', fontSize: '1rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.2em' }}>
+              06 — Featured
             </div>
           </div>
           
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: '2rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))', gap: '2.5rem' }}>
             {projects.map(project => (
               <ProjectCard key={project.id} project={project} />
             ))}
@@ -122,45 +160,44 @@ function App() {
       </section>
 
       {/* Footer */}
-      <footer style={{ padding: '8rem 0 4rem', borderTop: '1px solid var(--card-border)' }}>
+      <footer style={{ padding: '10rem 0 5rem', borderTop: '1px solid var(--card-border)' }}>
         <div className="container">
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '4rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '5rem' }}>
             <div>
-              <h3 style={{ fontSize: '2.5rem', fontWeight: 900, color: '#fff', letterSpacing: '-0.04em', marginBottom: '1rem' }}>
-                Let's build <br/> something <span style={{ color: 'var(--accent-cyan)' }}>great</span>.
+              <h3 style={{ fontSize: '3rem', fontWeight: 900, color: '#fff', letterSpacing: '-0.05em', marginBottom: '1.5rem', lineHeight: 1 }}>
+                Let's start <br/> the <span style={{ color: 'var(--accent-cyan)' }}>conversation</span>.
               </h3>
-              <p style={{ color: 'var(--text-dim)', maxWidth: '400px' }}>
-                Open for collaborations and interesting software engineering challenges.
+              <p style={{ color: 'var(--text-dim)', fontSize: '1.1rem', maxWidth: '450px' }}>
+                Currently based in Illinois. Open to discussions on systems, graphics, and robotics.
               </p>
             </div>
             
-            <div style={{ display: 'flex', gap: '3rem' }}>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                <span style={{ fontSize: '0.7rem', fontWeight: 800, textTransform: 'uppercase', color: 'var(--accent-cyan)' }}>Social</span>
-                <a href="https://github.com/joshuachen6" target="_blank" rel="noopener noreferrer" style={{ color: '#fff', textDecoration: 'none', fontWeight: 600 }}>GitHub</a>
-                <a href="#" style={{ color: '#fff', textDecoration: 'none', fontWeight: 600 }}>LinkedIn</a>
+            <div style={{ display: 'flex', gap: '4rem' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+                <span style={{ fontSize: '0.8rem', fontWeight: 900, textTransform: 'uppercase', color: 'var(--accent-cyan)', letterSpacing: '0.1em' }}>Social</span>
+                <a href="https://github.com/joshuachen6" target="_blank" rel="noopener noreferrer" style={{ color: '#fff', textDecoration: 'none', fontWeight: 700, fontSize: '1.1rem' }}>GitHub</a>
+                <a href="#" style={{ color: '#fff', textDecoration: 'none', fontWeight: 700, fontSize: '1.1rem' }}>LinkedIn</a>
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                <span style={{ fontSize: '0.7rem', fontWeight: 800, textTransform: 'uppercase', color: 'var(--accent-purple)' }}>Contact</span>
-                <a href="mailto:jhc3628@gmail.com" style={{ color: '#fff', textDecoration: 'none', fontWeight: 600 }}>Email</a>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+                <span style={{ fontSize: '0.8rem', fontWeight: 900, textTransform: 'uppercase', color: 'var(--accent-purple)', letterSpacing: '0.1em' }}>Contact</span>
+                <a href="mailto:jhc3628@gmail.com" style={{ color: '#fff', textDecoration: 'none', fontWeight: 700, fontSize: '1.1rem' }}>Email</a>
               </div>
             </div>
           </div>
           
-          <div style={{ marginTop: '6rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: 'rgba(255,255,255,0.2)', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+          <div style={{ marginTop: '8rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: 'rgba(255,255,255,0.3)', fontSize: '0.8rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.2em' }}>
             <span>&copy; {new Date().getFullYear()} Joshua Chen</span>
-            <span>Handcrafted in Illinois</span>
+            <span style={{ color: 'var(--accent-cyan)' }}>UIUC CS + Bio-E</span>
           </div>
         </div>
       </footer>
 
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
         html { scroll-behavior: smooth; }
         @keyframes bounce {
-          0%, 20%, 50%, 80%, 100% {transform: translateY(0) translateX(-50%);}
-          40% {transform: translateY(-10px) translateX(-50%);}
-          60% {transform: translateY(-5px) translateX(-50%);}
+          0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+          40% {transform: translateY(-15px);}
+          60% {transform: translateY(-8px);}
         }
       `}</style>
     </>
