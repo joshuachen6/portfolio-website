@@ -13,8 +13,8 @@ function App() {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    // High resolution settings
-    const ratio = 2; // Low ratio = high resolution
+    // Scale settings
+    const ratio = 4; // Balanced ratio for better wave scale
     let width = Math.floor(window.innerWidth / ratio);
     let height = Math.floor(window.innerHeight / ratio);
     let size = width * height;
@@ -22,7 +22,8 @@ function App() {
     let buffer1 = new Int32Array(size);
     let buffer2 = new Int32Array(size);
     
-    // Performance optimization: Use a 32-bit view for the ImageData buffer
+    const offscreenCanvas = document.createElement('canvas');
+    const offscreenCtx = offscreenCanvas.getContext('2d')!;
 
     const resize = () => {
       canvas.width = window.innerWidth;
@@ -32,12 +33,13 @@ function App() {
       size = width * height;
       buffer1 = new Int32Array(size);
       buffer2 = new Int32Array(size);
+      offscreenCanvas.width = width;
+      offscreenCanvas.height = height;
     };
 
     window.addEventListener('resize', resize);
     resize();
 
-    // Line drawing into the heightmap to create a "slice"
     const line = (x0: number, y0: number, x1: number, y1: number, strength: number) => {
       const dx = Math.abs(x1 - x0);
       const dy = Math.abs(y1 - y0);
@@ -59,10 +61,9 @@ function App() {
     };
 
     const update = () => {
-      // Tight wave equation loop
       for (let i = width; i < size - width; i++) {
         buffer2[i] = ((buffer1[i - 1] + buffer1[i + 1] + buffer1[i - width] + buffer1[i + width]) >> 1) - buffer2[i];
-        buffer2[i] -= buffer2[i] >> 6; // Damping
+        buffer2[i] -= buffer2[i] >> 6;
       }
       const temp = buffer1;
       buffer1 = buffer2;
@@ -70,44 +71,38 @@ function App() {
     };
 
     const render = () => {
-      const currentImgData = ctx.createImageData(width, height);
+      const currentImgData = offscreenCtx.createImageData(width, height);
       const view = new Uint32Array(currentImgData.data.buffer);
       
       for (let i = 0; i < size; i++) {
         const b1 = buffer1[i];
-        
-        // Specular highlight calculation based on horizontal gradient
         const dx = buffer1[i + 1] - buffer1[i - 1];
         const dy = buffer1[i + width] - buffer1[i - width];
         const specular = (dx + dy) >> 1;
         
-        const alpha = Math.min(255, Math.max(0, (Math.abs(b1) >> 3) + specular + 20));
+        const alpha = Math.min(255, Math.max(0, (Math.abs(b1) >> 3) + specular + 30));
         
-        // ARGB format (little-endian: ABGR)
-        // 0xAABBGGRR -> Cyan highlights (0x00F2FF)
-        // We vary the intensity based on alpha
-        if (alpha > 10) {
-          const r = Math.min(255, 0 + alpha);
-          const g = Math.min(255, 242 + alpha);
-          const b = Math.min(255, 255 + alpha);
-          view[i] = (alpha << 24) | (b << 16) | (g << 8) | r;
+        if (alpha > 5) {
+          const intensity = Math.min(255, alpha);
+          // ABGR format for cyan
+          view[i] = (intensity << 24) | (255 << 16) | (242 << 8) | 0;
         } else {
           view[i] = 0;
         }
       }
       
-      ctx.putImageData(currentImgData, 0, 0);
+      offscreenCtx.putImageData(currentImgData, 0, 0);
       
-      // Scale up to screen with high quality
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.globalCompositeOperation = 'screen';
       ctx.imageSmoothingEnabled = true;
-      ctx.drawImage(canvas, 0, 0, width, height, 0, 0, canvas.width, canvas.height);
+      // ONLY draw the scaled version
+      ctx.drawImage(offscreenCanvas, 0, 0, width, height, 0, 0, canvas.width, canvas.height);
     };
 
     let animId: number;
     const loop = () => {
       update();
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
       render();
       animId = requestAnimationFrame(loop);
     };
@@ -117,12 +112,10 @@ function App() {
     const handleMouseMove = (e: MouseEvent) => {
       const x = (e.clientX / ratio) | 0;
       const y = (e.clientY / ratio) | 0;
-      
       const lx = (lastMousePos.current.x / ratio) | 0;
       const ly = (lastMousePos.current.y / ratio) | 0;
       
-      line(lx, ly, x, y, 512);
-      
+      line(lx, ly, x, y, 800);
       lastMousePos.current = { x: e.clientX, y: e.clientY };
     };
 
