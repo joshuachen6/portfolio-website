@@ -5,53 +5,102 @@ import { projects } from './data/projects';
 
 function App() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const ripples = useRef<any[]>([]);
-
+  
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
+
+    // Simulation settings
+    const ratio = 4; // Lower resolution for physics
+    const damping = 0.96;
+    let width = Math.floor(window.innerWidth / ratio);
+    let height = Math.floor(window.innerHeight / ratio);
+    const size = width * height;
+    
+    let buffer1 = new Float32Array(size);
+    let buffer2 = new Float32Array(size);
 
     const resize = () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
+      width = Math.floor(window.innerWidth / ratio);
+      height = Math.floor(window.innerHeight / ratio);
+      const newSize = width * height;
+      buffer1 = new Float32Array(newSize);
+      buffer2 = new Float32Array(newSize);
     };
 
     window.addEventListener('resize', resize);
     resize();
 
-    const animate = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      
-      ripples.current = ripples.current.filter(ripple => ripple.opacity > 0);
-      
-      ripples.current.forEach(ripple => {
-        ctx.beginPath();
-        ctx.arc(ripple.x, ripple.y, ripple.radius, 0, Math.PI * 2);
-        ctx.strokeStyle = `rgba(0, 242, 255, ${ripple.opacity})`;
-        ctx.lineWidth = 2;
-        ctx.stroke();
+    const ripple = (x: number, y: number) => {
+      const ix = Math.floor(x / ratio);
+      const iy = Math.floor(y / ratio);
+      const index = iy * width + ix;
+      if (index >= 0 && index < size) {
+        buffer1[index] = 512;
+      }
+    };
+
+    const update = () => {
+      for (let i = width; i < size - width; i++) {
+        // Basic wave equation: (neighbors / 2) - current
+        buffer2[i] = (
+          (buffer1[i - 1] +
+            buffer1[i + 1] +
+            buffer1[i - width] +
+            buffer1[i + width]) / 2
+        ) - buffer2[i];
         
-        ripple.radius += 2;
-        ripple.opacity -= 0.01;
-      });
+        buffer2[i] *= damping;
+      }
       
+      // Swap buffers
+      const nextBuffer = buffer1;
+      buffer1 = buffer2;
+      buffer2 = nextBuffer;
+    };
+
+    const draw = () => {
+      const imageData = ctx.createImageData(width, height);
+      const data = imageData.data;
+
+      for (let i = 0; i < size; i++) {
+        const val = buffer1[i];
+        // Create a "highlight/shadow" effect based on height gradient
+        const r = 0;
+        const g = 242;
+        const b = 255;
+        
+        const alpha = Math.min(Math.abs(val) * 0.5, 255);
+        const pixelIdx = i * 4;
+        
+        data[pixelIdx] = r;
+        data[pixelIdx + 1] = g;
+        data[pixelIdx + 2] = b;
+        data[pixelIdx + 3] = alpha;
+      }
+
+      ctx.putImageData(imageData, 0, 0);
+      
+      // Scale up the low-res physics canvas to screen size
+      ctx.globalCompositeOperation = 'screen';
+      ctx.drawImage(canvas, 0, 0, width, height, 0, 0, canvas.width, canvas.height);
+    };
+
+    const animate = () => {
+      update();
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      draw();
       requestAnimationFrame(animate);
     };
 
     animate();
 
     const handleMouseMove = (e: MouseEvent) => {
-      if (Math.random() > 0.8) {
-        ripples.current.push({
-          x: e.clientX,
-          y: e.clientY,
-          radius: 0,
-          opacity: 0.5
-        });
-      }
+      ripple(e.clientX, e.clientY);
     };
 
     window.addEventListener('mousemove', handleMouseMove);
