@@ -24,7 +24,7 @@ function App() {
               <a href="#projects" className="btn-primary">
                 View My Work
               </a>
-              <a href="mailto:jchen@example.com" className="glass-card" style={{ padding: '0.75rem 1.5rem', textDecoration: 'none', color: '#fff', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <a href="mailto:jhc3628@gmail.com" className="glass-card" style={{ padding: '0.75rem 1.5rem', textDecoration: 'none', color: '#fff', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                 <Mail size={18} /> Get in Touch
               </a>
             </div>
@@ -85,7 +85,7 @@ function App() {
               <a href="#" style={{ color: 'var(--text-dim)', transition: 'color 0.3s ease' }} onMouseOver={(e) => e.currentTarget.style.color = 'var(--accent-purple)'} onMouseOut={(e) => e.currentTarget.style.color = 'var(--text-dim)'}>
                 <Linkedin size={24} />
               </a>
-              <a href="mailto:jchen@example.com" style={{ color: 'var(--text-dim)', transition: 'color 0.3s ease' }} onMouseOver={(e) => e.currentTarget.style.color = 'var(--accent-cyan)'} onMouseOut={(e) => e.currentTarget.style.color = 'var(--text-dim)'}>
+              <a href="mailto:jhc3628@gmail.com" style={{ color: 'var(--text-dim)', transition: 'color 0.3s ease' }} onMouseOver={(e) => e.currentTarget.style.color = 'var(--accent-cyan)'} onMouseOut={(e) => e.currentTarget.style.color = 'var(--text-dim)'}>
                 <Mail size={24} />
               </a>
             </div>
