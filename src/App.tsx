@@ -1,81 +1,103 @@
-import { Mail, Github, Linkedin, ChevronDown, GraduationCap, MapPin, Terminal, BrainCircuit } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Mail, GraduationCap, MapPin, Terminal, BrainCircuit, Sparkles } from 'lucide-react';
 import ProjectCard from './components/ProjectCard';
 import { projects } from './data/projects';
 
 function App() {
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      setMousePos({ x: e.clientX, y: e.clientY });
+    };
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
+
   return (
     <>
-      <div className="bg-glow" />
+      <div className="bg-grid" />
+      <div className="bg-grain" />
       
+      {/* Dynamic Cursor Glow */}
+      <div style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        pointerEvents: 'none',
+        zIndex: -1,
+        background: `radial-gradient(600px circle at ${mousePos.x}px ${mousePos.y}px, rgba(0, 242, 255, 0.05), transparent 80%)`
+      }} />
+
       {/* Hero Section */}
       <header style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', position: 'relative' }}>
         <div className="container">
-          <div style={{ maxWidth: '1000px', margin: '0 auto', textAlign: 'center' }}>
-            <div style={{ marginBottom: '2rem' }}>
+          <div style={{ maxWidth: '900px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '2rem' }}>
+              <Sparkles size={18} color="var(--accent-cyan)" />
               <span style={{ 
-                background: 'rgba(0, 242, 255, 0.1)', 
-                padding: '0.6rem 1.5rem', 
-                borderRadius: '100px', 
-                fontSize: '0.9rem', 
+                fontSize: '0.85rem', 
                 fontWeight: 700, 
                 color: 'var(--accent-cyan)',
-                border: '1px solid rgba(0, 242, 255, 0.3)',
                 textTransform: 'uppercase',
-                letterSpacing: '0.15em'
+                letterSpacing: '0.2em'
               }}>
-                Software Engineer
+                Engineering the next generation
               </span>
             </div>
-            <h1 style={{ fontSize: 'clamp(3.5rem, 12vw, 7.5rem)', lineHeight: 0.9, fontWeight: 900, marginBottom: '2.5rem', color: '#fff', letterSpacing: '-0.05em' }}>
-              Joshua <span style={{ 
-                background: 'linear-gradient(to bottom, #fff 30%, var(--accent-cyan) 100%)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                display: 'inline-block'
-              }}>Chen</span>
+            
+            <h1 style={{ fontSize: 'clamp(3.5rem, 10vw, 7rem)', lineHeight: 0.9, fontWeight: 900, marginBottom: '2rem', color: '#fff', letterSpacing: '-0.05em' }}>
+              Joshua <span style={{ color: 'transparent', WebkitTextStroke: '1.5px rgba(255,255,255,0.8)' }}>Chen</span>
             </h1>
-            <p style={{ fontSize: 'clamp(1.25rem, 3.5vw, 1.75rem)', color: 'var(--text-dim)', marginBottom: '3.5rem', maxWidth: '800px', margin: '0 auto 4rem', fontWeight: 400, lineHeight: 1.4 }}>
-              CS + Bio-engineering at <strong>UIUC</strong>. 
-              Architecting high-performance systems, search algorithms, and graphics engines.
+            
+            <p style={{ fontSize: 'clamp(1.2rem, 2.5vw, 1.5rem)', color: 'var(--text-dim)', marginBottom: '3rem', maxWidth: '700px', fontWeight: 400, lineHeight: 1.5 }}>
+              Computer Science + Bio-engineering @ <strong>UIUC</strong>. 
+              Bridging the gap between software and hardware through systems, graphics, and algorithms.
             </p>
             
-            <div style={{ display: 'flex', justifyContent: 'center', gap: '3rem', marginBottom: '5rem', color: '#fff', fontSize: '1.1rem', fontWeight: 500 }}>
-              <span style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                <GraduationCap size={24} color="var(--accent-cyan)" /> UIUC
-              </span>
-              <span style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                <MapPin size={24} color="var(--accent-purple)" /> Illinois
-              </span>
+            <div style={{ display: 'flex', gap: '2rem', marginBottom: '4rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', color: 'var(--text-dim)', fontSize: '0.9rem' }}>
+                <GraduationCap size={18} /> UIUC CS + Bio-E
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', color: 'var(--text-dim)', fontSize: '0.9rem' }}>
+                <MapPin size={18} /> Illinois, USA
+              </div>
             </div>
 
-            <div style={{ display: 'flex', gap: '1.5rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', gap: '1.25rem', flexWrap: 'wrap' }}>
               <a href="#projects" className="btn-primary">
-                Explore Projects
+                View Work
               </a>
-              <a href="mailto:jhc3628@gmail.com" className="glass-card" style={{ padding: '1rem 2.2rem', textDecoration: 'none', color: '#fff', display: 'flex', alignItems: 'center', gap: '0.75rem', fontWeight: 700, borderRadius: '16px' }}>
-                <Mail size={20} /> Contact
+              <a href="mailto:jhc3628@gmail.com" className="glass-card" style={{ padding: '0.8rem 1.8rem', textDecoration: 'none', color: '#fff', display: 'flex', alignItems: 'center', gap: '0.6rem', fontWeight: 700, borderRadius: '10px' }}>
+                <Mail size={18} /> Say Hello
               </a>
             </div>
           </div>
         </div>
-        <div style={{ position: 'absolute', bottom: '3rem', left: '50%', transform: 'translateX(-50%)', color: 'var(--accent-cyan)', animation: 'bounce 2s infinite' }}>
-          <ChevronDown size={36} />
+        <div style={{ position: 'absolute', bottom: '3rem', left: '2rem', color: 'rgba(255,255,255,0.2)', writingMode: 'vertical-rl', fontSize: '0.7rem', letterSpacing: '0.2em', textTransform: 'uppercase' }}>
+          Scroll to explore
         </div>
       </header>
 
-      {/* Domain Focus */}
-      <section style={{ padding: '6rem 0' }}>
+      {/* Philosophy Section */}
+      <section style={{ padding: '8rem 0' }}>
         <div className="container">
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2.5rem' }}>
-            <div className="glass-card" style={{ padding: '3rem', textAlign: 'left', borderLeft: '4px solid var(--accent-cyan)' }}>
-              <Terminal size={40} color="var(--accent-cyan)" style={{ marginBottom: '1.5rem' }} />
-              <h3 style={{ fontSize: '1.5rem', marginBottom: '1rem', color: '#fff' }}>Systems & Graphics</h3>
-              <p style={{ color: 'var(--text-dim)', fontSize: '1rem', lineHeight: 1.6 }}>C++ optimization, hardware-accelerated visualization, and real-time rendering engines.</p>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '3rem' }}>
+            <div className="glass-card" style={{ padding: '3rem' }}>
+              <Terminal size={32} color="var(--accent-cyan)" style={{ marginBottom: '1.5rem' }} />
+              <h3 style={{ fontSize: '1.25rem', marginBottom: '1rem', color: '#fff', fontWeight: 800 }}>Systems Thinking</h3>
+              <p style={{ color: 'var(--text-dim)', fontSize: '0.95rem', lineHeight: 1.7 }}>
+                I build tools that prioritize performance and developer experience. From C++20 robotics libraries to interactive Python generators.
+              </p>
             </div>
-            <div className="glass-card" style={{ padding: '3rem', textAlign: 'left', borderLeft: '4px solid var(--accent-purple)' }}>
-              <BrainCircuit size={40} color="var(--accent-purple)" style={{ marginBottom: '1.5rem' }} />
-              <h3 style={{ fontSize: '1.5rem', marginBottom: '1rem', color: '#fff' }}>Algorithms & AI</h3>
-              <p style={{ color: 'var(--text-dim)', fontSize: '1rem', lineHeight: 1.6 }}>Advanced search techniques, bitboard engines, and reinforcement learning research.</p>
+            <div className="glass-card" style={{ padding: '3rem' }}>
+              <BrainCircuit size={32} color="var(--accent-purple)" style={{ marginBottom: '1.5rem' }} />
+              <h3 style={{ fontSize: '1.25rem', marginBottom: '1rem', color: '#fff', fontWeight: 800 }}>Algorithmic Depth</h3>
+              <p style={{ color: 'var(--text-dim)', fontSize: '0.95rem', lineHeight: 1.7 }}>
+                Solving complex state-space problems through heuristic search, bitboard engines, and reinforcement learning research.
+              </p>
             </div>
           </div>
         </div>
@@ -84,8 +106,14 @@ function App() {
       {/* Projects Section */}
       <section id="projects" style={{ padding: '8rem 0' }}>
         <div className="container">
-          <h2 className="section-title">Selected Works</h2>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(380px, 1fr))', gap: '3rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '4rem' }}>
+            <h2 className="section-title" style={{ marginBottom: 0 }}>Selected <br/>Projects</h2>
+            <div style={{ color: 'var(--text-dim)', fontSize: '0.8rem', textAlign: 'right', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+              06 — Featured Works
+            </div>
+          </div>
+          
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: '2rem' }}>
             {projects.map(project => (
               <ProjectCard key={project.id} project={project} />
             ))}
@@ -94,38 +122,45 @@ function App() {
       </section>
 
       {/* Footer */}
-      <footer style={{ padding: '10rem 0 5rem', borderTop: '1px solid var(--card-border)', background: 'linear-gradient(to bottom, transparent, rgba(0,242,255,0.02))' }}>
+      <footer style={{ padding: '8rem 0 4rem', borderTop: '1px solid var(--card-border)' }}>
         <div className="container">
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '4rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '4rem' }}>
             <div>
-              <h3 style={{ fontSize: '2.5rem', marginBottom: '0.75rem', fontWeight: 900, color: '#fff', letterSpacing: '-0.03em' }}>Joshua Chen</h3>
-              <p style={{ color: 'var(--text-dim)', fontSize: '1.1rem' }}>Software Engineer • CS + Bio-E @ UIUC</p>
+              <h3 style={{ fontSize: '2.5rem', fontWeight: 900, color: '#fff', letterSpacing: '-0.04em', marginBottom: '1rem' }}>
+                Let's build <br/> something <span style={{ color: 'var(--accent-cyan)' }}>great</span>.
+              </h3>
+              <p style={{ color: 'var(--text-dim)', maxWidth: '400px' }}>
+                Open for collaborations and interesting software engineering challenges.
+              </p>
             </div>
-            <div style={{ display: 'flex', gap: '2.5rem' }}>
-              <a href="https://github.com/joshuachen6" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--text-dim)', transition: 'all 0.3s ease' }} onMouseOver={(e) => {e.currentTarget.style.color = 'var(--accent-cyan)'; e.currentTarget.style.transform = 'translateY(-5px)';}} onMouseOut={(e) => {e.currentTarget.style.color = 'var(--text-dim)'; e.currentTarget.style.transform = 'translateY(0)';}}>
-                <Github size={32} />
-              </a>
-              <a href="#" style={{ color: 'var(--text-dim)', transition: 'all 0.3s ease' }} onMouseOver={(e) => {e.currentTarget.style.color = 'var(--accent-purple)'; e.currentTarget.style.transform = 'translateY(-5px)';}} onMouseOut={(e) => {e.currentTarget.style.color = 'var(--text-dim)'; e.currentTarget.style.transform = 'translateY(0)';}}>
-                <Linkedin size={32} />
-              </a>
-              <a href="mailto:jhc3628@gmail.com" style={{ color: 'var(--text-dim)', transition: 'all 0.3s ease' }} onMouseOver={(e) => {e.currentTarget.style.color = 'var(--accent-cyan)'; e.currentTarget.style.transform = 'translateY(-5px)';}} onMouseOut={(e) => {e.currentTarget.style.color = 'var(--text-dim)'; e.currentTarget.style.transform = 'translateY(0)';}}>
-                <Mail size={32} />
-              </a>
+            
+            <div style={{ display: 'flex', gap: '3rem' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                <span style={{ fontSize: '0.7rem', fontWeight: 800, textTransform: 'uppercase', color: 'var(--accent-cyan)' }}>Social</span>
+                <a href="https://github.com/joshuachen6" target="_blank" rel="noopener noreferrer" style={{ color: '#fff', textDecoration: 'none', fontWeight: 600 }}>GitHub</a>
+                <a href="#" style={{ color: '#fff', textDecoration: 'none', fontWeight: 600 }}>LinkedIn</a>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                <span style={{ fontSize: '0.7rem', fontWeight: 800, textTransform: 'uppercase', color: 'var(--accent-purple)' }}>Contact</span>
+                <a href="mailto:jhc3628@gmail.com" style={{ color: '#fff', textDecoration: 'none', fontWeight: 600 }}>Email</a>
+              </div>
             </div>
           </div>
-          <div style={{ marginTop: '5rem', textAlign: 'center', color: 'rgba(255,255,255,0.2)', fontSize: '0.9rem' }}>
-            &copy; {new Date().getFullYear()} Joshua Chen. Built with React & TypeScript.
+          
+          <div style={{ marginTop: '6rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: 'rgba(255,255,255,0.2)', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+            <span>&copy; {new Date().getFullYear()} Joshua Chen</span>
+            <span>Handcrafted in Illinois</span>
           </div>
         </div>
       </footer>
 
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
         html { scroll-behavior: smooth; }
         @keyframes bounce {
           0%, 20%, 50%, 80%, 100% {transform: translateY(0) translateX(-50%);}
-          40% {transform: translateY(-15px) translateX(-50%);}
-          60% {transform: translateY(-7px) translateX(-50%);}
+          40% {transform: translateY(-10px) translateX(-50%);}
+          60% {transform: translateY(-5px) translateX(-50%);}
         }
       `}</style>
     </>
