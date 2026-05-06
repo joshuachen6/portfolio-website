@@ -25,15 +25,15 @@ jobs:
         with:
           node-version: 22
           cache: 'npm'
-          cache-dependency-path: portfolio-website/package-lock.json
+          cache-dependency-path: package-lock.json
       - name: Install dependencies
-        run: cd portfolio-website && npm install
+        run: npm install
       - name: Build
-        run: cd portfolio-website && npm run build
+        run: npm run build
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: portfolio-website/dist
+          path: dist
 
   deploy:
     environment:
