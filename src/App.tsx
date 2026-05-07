@@ -1,6 +1,7 @@
-import { Mail, Terminal, Activity, Ruler } from 'lucide-react';
+import { Mail, Terminal, Activity, Ruler, BookOpen } from 'lucide-react';
 import ProjectCard from './components/ProjectCard';
 import { projects } from './data/projects';
+import { courseGroups } from './data/courses';
 
 function App() {
   return (
@@ -105,6 +106,53 @@ function App() {
                 Real-time software rendering and hardware-accelerated visualization. Bridging mathematical models with pixels.
               </p>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Coursework Section */}
+      <section id="coursework" style={{ padding: '8rem 0' }}>
+        <div className="container">
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '5rem' }}>
+            <h2 className="section-title" style={{ marginBottom: 0 }}>coursework.log</h2>
+            <div style={{ display: 'flex', gap: '2rem' }}>
+              <div style={{ textAlign: 'right' }}>
+                <div style={{ color: 'var(--accent-cyan)', fontFamily: 'JetBrains Mono', fontSize: '12px', fontWeight: 700 }}>UIUC // CS + BIOE</div>
+                <div style={{ color: 'var(--text-dim)', fontFamily: 'JetBrains Mono', fontSize: '8px' }}>CATALOG_YR: 2024-08</div>
+              </div>
+            </div>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '2rem' }}>
+            {courseGroups.map(group => (
+              <div key={group.label} className="blueprint-card" style={{ display: 'flex', flexDirection: 'column' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '2rem' }}>
+                  <BookOpen size={18} color="var(--accent-cyan)" />
+                  <span style={{ color: 'var(--accent-cyan)', fontFamily: 'JetBrains Mono', fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.1em' }}>
+                    {group.label}
+                  </span>
+                </div>
+                <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.85rem', padding: 0 }}>
+                  {group.courses.map(course => (
+                    <li key={course.code} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: '1rem', borderBottom: '1px dashed rgba(255,255,255,0.05)', paddingBottom: '0.6rem' }}>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem', minWidth: 0 }}>
+                        <span style={{ color: '#fff', fontFamily: 'JetBrains Mono', fontSize: '0.8rem', fontWeight: 600 }}>
+                          {course.code}
+                        </span>
+                        <span style={{ color: 'var(--text-dim)', fontSize: '0.75rem', fontFamily: 'JetBrains Mono', lineHeight: 1.4 }}>
+                          {course.title}
+                        </span>
+                      </div>
+                      {course.inProgress && (
+                        <span style={{ color: 'var(--accent-purple)', fontFamily: 'JetBrains Mono', fontSize: '0.6rem', fontWeight: 700, letterSpacing: '0.15em', whiteSpace: 'nowrap' }}>
+                          [IP]
+                        </span>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
           </div>
         </div>
       </section>
