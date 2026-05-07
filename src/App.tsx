@@ -195,7 +195,7 @@ function App() {
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
                 <span style={{ fontSize: '0.7rem', fontWeight: 800, textTransform: 'uppercase', color: 'var(--accent-cyan)', letterSpacing: '0.2em' }}>Connections</span>
                 <a href="https://github.com/joshuachen6" target="_blank" rel="noopener noreferrer" style={{ color: '#fff', textDecoration: 'none', fontWeight: 700, fontSize: '1.1rem' }}>GitHub</a>
-                <a href="#" style={{ color: '#fff', textDecoration: 'none', fontWeight: 700, fontSize: '1.1rem' }}>LinkedIn</a>
+                <a href="https://www.linkedin.com/in/joshua-chen-b457aa331/" target="_blank" rel="noopener noreferrer" style={{ color: '#fff', textDecoration: 'none', fontWeight: 700, fontSize: '1.1rem' }}>LinkedIn</a>
               </div>
             </div>
           </div>
