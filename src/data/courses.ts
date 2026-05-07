@@ -28,7 +28,6 @@ export const courseGroups: CourseGroup[] = [
       { code: 'MATH 285', title: 'Differential Equations' },
       { code: 'CS 357', title: 'Numerical Methods I' },
       { code: 'BIOE 205', title: 'Signal Processing in BIOE', inProgress: true },
-      { code: 'BIOE 498', title: 'Senior Engineering Design', inProgress: true },
     ],
   },
 ];
