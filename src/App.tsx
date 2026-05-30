@@ -1,7 +1,8 @@
-import { Mail, Terminal, Activity, Ruler, BookOpen } from 'lucide-react';
+import { Mail, Terminal, Activity, Ruler, BookOpen, Briefcase } from 'lucide-react';
 import ProjectCard from './components/ProjectCard';
 import { projects } from './data/projects';
 import { courseGroups } from './data/courses';
+import { experiences } from './data/experience';
 
 function App() {
   return (
@@ -106,6 +107,56 @@ function App() {
                 Real-time software rendering and hardware-accelerated visualization. Bridging mathematical models with pixels.
               </p>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Work Experience Section */}
+      <section id="experience" className="section-pad" style={{ padding: '8rem 0' }}>
+        <div className="container">
+          <div className="section-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '5rem' }}>
+            <h2 className="section-title" style={{ marginBottom: 0 }}>experience.log</h2>
+            <div style={{ textAlign: 'right' }}>
+              <div style={{ color: 'var(--accent-cyan)', fontFamily: 'JetBrains Mono', fontSize: '12px', fontWeight: 700 }}>2 POSITIONS</div>
+              <div style={{ color: 'var(--text-dim)', fontFamily: 'JetBrains Mono', fontSize: '8px' }}>STATUS: ACTIVE</div>
+            </div>
+          </div>
+
+          <div className="responsive-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '2rem' }}>
+            {experiences.map(exp => (
+              <div key={exp.id} className="blueprint-card" style={{ display: 'flex', flexDirection: 'column' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.75rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                    <Briefcase size={18} color="var(--accent-cyan)" />
+                    <span style={{ color: 'var(--accent-cyan)', fontFamily: 'JetBrains Mono', fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.1em' }}>
+                      {exp.company.toUpperCase().replace(/ /g, '_')}
+                    </span>
+                  </div>
+                  {exp.active && (
+                    <span style={{ color: 'var(--accent-purple)', fontFamily: 'JetBrains Mono', fontSize: '0.6rem', fontWeight: 700, letterSpacing: '0.15em' }}>
+                      [ACTIVE]
+                    </span>
+                  )}
+                </div>
+
+                <h3 style={{ fontSize: '1.3rem', fontWeight: 700, color: '#fff', marginBottom: '0.4rem' }}>
+                  {exp.role}
+                </h3>
+                <div style={{ color: 'var(--text-dim)', fontFamily: 'JetBrains Mono', fontSize: '0.7rem', marginBottom: '1.5rem', letterSpacing: '0.05em' }}>
+                  {exp.period}
+                </div>
+
+                <p style={{ color: 'var(--text-dim)', fontSize: '0.85rem', lineHeight: 1.7, fontFamily: 'JetBrains Mono', flexGrow: 1, marginBottom: '2rem' }}>
+                  {exp.description}
+                </p>
+
+                <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+                  {exp.tags.map(tag => (
+                    <span key={tag} className="tag">{tag}</span>
+                  ))}
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
