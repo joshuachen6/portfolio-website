@@ -10,13 +10,13 @@ function App() {
       <div className="bg-glow" />
       
       {/* Drafting Overlay UI */}
-      <div style={{ position: 'fixed', top: '2rem', left: '2rem', zIndex: 10, display: 'flex', flexDirection: 'column', gap: '0.5rem', color: 'var(--text-dim)', fontFamily: 'JetBrains Mono', fontSize: '10px' }}>
+      <div className="overlay-corner" style={{ position: 'fixed', top: '2rem', left: '2rem', zIndex: 10, display: 'flex', flexDirection: 'column', gap: '0.5rem', color: 'var(--text-dim)', fontFamily: 'JetBrains Mono', fontSize: '10px' }}>
         <div>LAT: 40.1068° N</div>
         <div>LON: 88.2272° W</div>
         <div style={{ color: 'var(--accent-cyan)' }}>STATUS: ACTIVE</div>
       </div>
 
-      <div style={{ position: 'fixed', bottom: '2rem', right: '2rem', zIndex: 10, color: 'var(--text-dim)', fontFamily: 'JetBrains Mono', fontSize: '10px', textAlign: 'right' }}>
+      <div className="overlay-corner" style={{ position: 'fixed', bottom: '2rem', right: '2rem', zIndex: 10, color: 'var(--text-dim)', fontFamily: 'JetBrains Mono', fontSize: '10px', textAlign: 'right' }}>
         <div>RELEASE v2.0.26</div>
         <div>SYSTEMS_OPTIMIZED</div>
       </div>
@@ -48,7 +48,7 @@ function App() {
               }}>Chen</span>
             </h1>
             
-            <div style={{ display: 'flex', gap: '4rem', marginBottom: '4rem', color: '#fff', fontFamily: 'JetBrains Mono' }}>
+            <div className="hero-stats" style={{ display: 'flex', gap: '4rem', marginBottom: '4rem', color: '#fff', fontFamily: 'JetBrains Mono' }}>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                 <span style={{ fontSize: '0.6rem', color: 'var(--text-dim)', textTransform: 'uppercase' }}>Focus</span>
                 <span style={{ fontSize: '0.9rem', fontWeight: 600 }}>Systems + Algorithms</span>
@@ -82,9 +82,9 @@ function App() {
       </header>
 
       {/* Blueprint Spec Section */}
-      <section style={{ padding: '8rem 0' }}>
+      <section className="section-pad" style={{ padding: '8rem 0' }}>
         <div className="container">
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem' }}>
+          <div className="responsive-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem' }}>
             <div className="blueprint-card">
               <Terminal size={32} color="var(--accent-cyan)" style={{ marginBottom: '1.5rem' }} />
               <h3 style={{ fontSize: '1.25rem', marginBottom: '1rem', color: '#fff', fontWeight: 700, fontFamily: 'JetBrains Mono' }}>MODULE: SYSTEMS</h3>
@@ -111,9 +111,9 @@ function App() {
       </section>
 
       {/* Coursework Section */}
-      <section id="coursework" style={{ padding: '8rem 0' }}>
+      <section id="coursework" className="section-pad" style={{ padding: '8rem 0' }}>
         <div className="container">
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '5rem' }}>
+          <div className="section-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '5rem' }}>
             <h2 className="section-title" style={{ marginBottom: 0 }}>coursework.log</h2>
             <div style={{ display: 'flex', gap: '2rem' }}>
               <div style={{ textAlign: 'right' }}>
@@ -123,7 +123,7 @@ function App() {
             </div>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '2rem' }}>
+          <div className="responsive-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '2rem' }}>
             {courseGroups.map(group => (
               <div key={group.label} className="blueprint-card" style={{ display: 'flex', flexDirection: 'column' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '2rem' }}>
@@ -158,9 +158,9 @@ function App() {
       </section>
 
       {/* Projects Section */}
-      <section id="projects" style={{ padding: '10rem 0' }}>
+      <section id="projects" className="section-pad-lg" style={{ padding: '10rem 0' }}>
         <div className="container">
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6rem' }}>
+          <div className="section-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6rem' }}>
             <h2 className="section-title" style={{ marginBottom: 0 }}>catalog.tar.gz</h2>
             <div style={{ display: 'flex', gap: '2rem' }}>
               <div style={{ textAlign: 'right' }}>
@@ -170,7 +170,7 @@ function App() {
             </div>
           </div>
           
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: '2rem' }}>
+          <div className="responsive-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: '2rem' }}>
             {projects.map(project => (
               <ProjectCard key={project.id} project={project} />
             ))}
@@ -179,9 +179,9 @@ function App() {
       </section>
 
       {/* Footer */}
-      <footer style={{ padding: '10rem 0 4rem', borderTop: '1px solid var(--grid-line)' }}>
+      <footer className="section-pad-lg" style={{ padding: '10rem 0 4rem', borderTop: '1px solid var(--grid-line)', background: 'var(--bg-color)' }}>
         <div className="container">
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '6rem' }}>
+          <div className="footer-main" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '6rem' }}>
             <div>
               <h3 style={{ fontSize: '3rem', fontWeight: 900, color: '#fff', letterSpacing: '-0.06em', marginBottom: '1.5rem', lineHeight: 1 }}>
                 eof.
@@ -191,7 +191,7 @@ function App() {
               </p>
             </div>
             
-            <div style={{ display: 'flex', gap: '5rem' }}>
+            <div className="footer-links" style={{ display: 'flex', gap: '5rem' }}>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
                 <span style={{ fontSize: '0.7rem', fontWeight: 800, textTransform: 'uppercase', color: 'var(--accent-cyan)', letterSpacing: '0.2em' }}>Connections</span>
                 <a href="https://github.com/joshuachen6" target="_blank" rel="noopener noreferrer" style={{ color: '#fff', textDecoration: 'none', fontWeight: 700, fontSize: '1.1rem' }}>GitHub</a>
@@ -200,7 +200,7 @@ function App() {
             </div>
           </div>
           
-          <div style={{ marginTop: '10rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: 'rgba(255,255,255,0.1)', fontSize: '0.7rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.3em', fontFamily: 'JetBrains Mono' }}>
+          <div className="footer-bottom" style={{ marginTop: '10rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: 'rgba(255,255,255,0.35)', fontSize: '0.7rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.3em', fontFamily: 'JetBrains Mono' }}>
             <span>&copy; {new Date().getFullYear()} Joshua Chen</span>
             <span>Handcrafted in Illinois</span>
           </div>

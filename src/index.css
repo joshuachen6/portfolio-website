@@ -145,3 +145,70 @@ body {
 }
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=JetBrains+Mono:wght@400;600&display=swap');
+
+/* ── Mobile responsive ────────────────────────────────────── */
+
+@media (max-width: 640px) {
+  .container {
+    padding: 0 1.25rem;
+  }
+
+  /* Hide decorative corner overlays — they cover content */
+  .overlay-corner {
+    display: none !important;
+  }
+
+  /* Hero stats row: stack vertically */
+  .hero-stats {
+    flex-direction: column !important;
+    gap: 1.5rem !important;
+  }
+
+  /* Section header row (title + metadata): stack vertically */
+  .section-header {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 0.75rem;
+    margin-bottom: 3rem !important;
+  }
+
+  /* Force single-column on all grids */
+  .responsive-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Tighter section vertical padding */
+  .section-pad {
+    padding: 4rem 0 !important;
+  }
+
+  .section-pad-lg {
+    padding: 5rem 0 !important;
+  }
+
+  /* Footer: stack columns */
+  .footer-main {
+    flex-direction: column !important;
+    gap: 3rem !important;
+  }
+
+  .footer-links {
+    gap: 3rem !important;
+  }
+
+  /* Footer bottom row: stack and center */
+  .footer-bottom {
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 0.5rem;
+    margin-top: 5rem !important;
+    text-align: center;
+  }
+
+  /* Bump up min touch targets for buttons/links */
+  .btn-primary {
+    padding: 1rem 1.5rem;
+    width: 100%;
+    justify-content: center;
+  }
+}
