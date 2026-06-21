@@ -1,4 +1,6 @@
 import { Mail, Terminal, Activity, Ruler, BookOpen, Briefcase } from 'lucide-react';
+import { SiGithub, SiCplusplus, SiPython, SiDatabricks } from 'react-icons/si';
+import { FaLinkedin, FaMicrosoft } from 'react-icons/fa';
 import ProjectCard from './components/ProjectCard';
 import { projects } from './data/projects';
 import { courseGroups } from './data/courses';
@@ -11,13 +13,13 @@ function App() {
       <div className="bg-glow" />
       
       {/* Drafting Overlay UI */}
-      <div className="overlay-corner" style={{ position: 'fixed', top: '2rem', left: '2rem', zIndex: 10, display: 'flex', flexDirection: 'column', gap: '0.5rem', color: 'var(--text-dim)', fontFamily: 'JetBrains Mono', fontSize: '10px' }}>
+      <div className="overlay-corner" style={{ position: 'fixed', top: '2rem', left: '2rem', zIndex: 10, display: 'flex', flexDirection: 'column', gap: '0.5rem', color: 'var(--text-dim)', fontFamily: 'Cascadia Code', fontSize: '10px' }}>
         <div>LAT: 40.1068° N</div>
         <div>LON: 88.2272° W</div>
         <div style={{ color: 'var(--accent-cyan)' }}>STATUS: ACTIVE</div>
       </div>
 
-      <div className="overlay-corner" style={{ position: 'fixed', bottom: '2rem', right: '2rem', zIndex: 10, color: 'var(--text-dim)', fontFamily: 'JetBrains Mono', fontSize: '10px', textAlign: 'right' }}>
+      <div className="overlay-corner" style={{ position: 'fixed', bottom: '2rem', right: '2rem', zIndex: 10, color: 'var(--text-dim)', fontFamily: 'Cascadia Code', fontSize: '10px', textAlign: 'right' }}>
         <div>RELEASE v2.0.26</div>
         <div>SYSTEMS_OPTIMIZED</div>
       </div>
@@ -30,7 +32,7 @@ function App() {
               <div style={{ width: '40px', height: '1px', background: 'var(--accent-cyan)' }} />
               <span style={{ 
                 fontSize: '0.8rem', 
-                fontFamily: 'JetBrains Mono',
+                fontFamily: 'Cascadia Code',
                 fontWeight: 600, 
                 color: 'var(--accent-cyan)',
                 textTransform: 'uppercase',
@@ -49,7 +51,7 @@ function App() {
               }}>Chen</span>
             </h1>
             
-            <div className="hero-stats" style={{ display: 'flex', gap: '4rem', marginBottom: '4rem', color: '#fff', fontFamily: 'JetBrains Mono' }}>
+            <div className="hero-stats" style={{ display: 'flex', gap: '4rem', marginBottom: '4rem', color: '#fff', fontFamily: 'Cascadia Code' }}>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                 <span style={{ fontSize: '0.6rem', color: 'var(--text-dim)', textTransform: 'uppercase' }}>Focus</span>
                 <span style={{ fontSize: '0.9rem', fontWeight: 600 }}>Systems + Algorithms</span>
@@ -71,7 +73,7 @@ function App() {
                 color: 'var(--text-dim)', 
                 textDecoration: 'none', 
                 fontSize: '0.8rem', 
-                fontFamily: 'JetBrains Mono',
+                fontFamily: 'Cascadia Code',
                 fontWeight: 600,
                 textTransform: 'uppercase'
               }} onMouseOver={(e) => (e.currentTarget.style.color = '#fff')} onMouseOut={(e) => (e.currentTarget.style.color = 'var(--text-dim)')}>
@@ -87,23 +89,32 @@ function App() {
         <div className="container">
           <div className="responsive-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem' }}>
             <div className="blueprint-card">
-              <Terminal size={32} color="var(--accent-cyan)" style={{ marginBottom: '1.5rem' }} />
-              <h3 style={{ fontSize: '1.25rem', marginBottom: '1rem', color: '#fff', fontWeight: 700, fontFamily: 'JetBrains Mono' }}>MODULE: SYSTEMS</h3>
-              <p style={{ color: 'var(--text-dim)', fontSize: '0.85rem', lineHeight: 1.7, fontFamily: 'JetBrains Mono' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.5rem' }}>
+                <Terminal size={28} color="var(--accent-cyan)" />
+                <SiCplusplus size={28} color="var(--accent-cyan)" style={{ opacity: 0.7 }} />
+              </div>
+              <h3 style={{ fontSize: '1.25rem', marginBottom: '1rem', color: '#fff', fontWeight: 700, fontFamily: 'Cascadia Code' }}>MODULE: SYSTEMS</h3>
+              <p style={{ color: 'var(--text-dim)', fontSize: '0.85rem', lineHeight: 1.7, fontFamily: 'Cascadia Code' }}>
                 Development of low-level C++ foundations. High-performance computing and hardware-software integration.
               </p>
             </div>
             <div className="blueprint-card">
-              <Activity size={32} color="var(--accent-purple)" style={{ marginBottom: '1.5rem' }} />
-              <h3 style={{ fontSize: '1.25rem', marginBottom: '1rem', color: '#fff', fontWeight: 700, fontFamily: 'JetBrains Mono' }}>MODULE: SEARCH</h3>
-              <p style={{ color: 'var(--text-dim)', fontSize: '0.85rem', lineHeight: 1.7, fontFamily: 'JetBrains Mono' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.5rem' }}>
+                <Activity size={28} color="var(--accent-purple)" />
+                <SiPython size={28} color="var(--accent-purple)" style={{ opacity: 0.7 }} />
+              </div>
+              <h3 style={{ fontSize: '1.25rem', marginBottom: '1rem', color: '#fff', fontWeight: 700, fontFamily: 'Cascadia Code' }}>MODULE: SEARCH</h3>
+              <p style={{ color: 'var(--text-dim)', fontSize: '0.85rem', lineHeight: 1.7, fontFamily: 'Cascadia Code' }}>
                 Optimization of state-space navigation. Heuristic search implementations and data-driven decision engines.
               </p>
             </div>
             <div className="blueprint-card">
-              <Ruler size={32} color="var(--accent-cyan)" style={{ marginBottom: '1.5rem' }} />
-              <h3 style={{ fontSize: '1.25rem', marginBottom: '1rem', color: '#fff', fontWeight: 700, fontFamily: 'JetBrains Mono' }}>MODULE: GRAPHICS</h3>
-              <p style={{ color: 'var(--text-dim)', fontSize: '0.85rem', lineHeight: 1.7, fontFamily: 'JetBrains Mono' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.5rem' }}>
+                <Ruler size={28} color="var(--accent-cyan)" />
+                <SiCplusplus size={28} color="var(--accent-cyan)" style={{ opacity: 0.7 }} />
+              </div>
+              <h3 style={{ fontSize: '1.25rem', marginBottom: '1rem', color: '#fff', fontWeight: 700, fontFamily: 'Cascadia Code' }}>MODULE: GRAPHICS</h3>
+              <p style={{ color: 'var(--text-dim)', fontSize: '0.85rem', lineHeight: 1.7, fontFamily: 'Cascadia Code' }}>
                 Real-time software rendering and hardware-accelerated visualization. Bridging mathematical models with pixels.
               </p>
             </div>
@@ -117,8 +128,8 @@ function App() {
           <div className="section-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '5rem' }}>
             <h2 className="section-title" style={{ marginBottom: 0 }}>experience.log</h2>
             <div style={{ textAlign: 'right' }}>
-              <div style={{ color: 'var(--accent-cyan)', fontFamily: 'JetBrains Mono', fontSize: '12px', fontWeight: 700 }}>2 POSITIONS</div>
-              <div style={{ color: 'var(--text-dim)', fontFamily: 'JetBrains Mono', fontSize: '8px' }}>STATUS: ACTIVE</div>
+              <div style={{ color: 'var(--accent-cyan)', fontFamily: 'Cascadia Code', fontSize: '12px', fontWeight: 700 }}>2 POSITIONS</div>
+              <div style={{ color: 'var(--text-dim)', fontFamily: 'Cascadia Code', fontSize: '8px' }}>STATUS: ACTIVE</div>
             </div>
           </div>
 
@@ -128,12 +139,12 @@ function App() {
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.75rem' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                     <Briefcase size={18} color="var(--accent-cyan)" />
-                    <span style={{ color: 'var(--accent-cyan)', fontFamily: 'JetBrains Mono', fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.1em' }}>
+                    <span style={{ color: 'var(--accent-cyan)', fontFamily: 'Cascadia Code', fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.1em' }}>
                       {exp.company.toUpperCase().replace(/ /g, '_')}
                     </span>
                   </div>
                   {exp.active && (
-                    <span style={{ color: 'var(--accent-purple)', fontFamily: 'JetBrains Mono', fontSize: '0.6rem', fontWeight: 700, letterSpacing: '0.15em' }}>
+                    <span style={{ color: 'var(--accent-purple)', fontFamily: 'Cascadia Code', fontSize: '0.6rem', fontWeight: 700, letterSpacing: '0.15em' }}>
                       [ACTIVE]
                     </span>
                   )}
@@ -142,14 +153,28 @@ function App() {
                 <h3 style={{ fontSize: '1.3rem', fontWeight: 700, color: '#fff', marginBottom: '0.4rem' }}>
                   {exp.role}
                 </h3>
-                <div style={{ color: 'var(--text-dim)', fontFamily: 'JetBrains Mono', fontSize: '0.7rem', marginBottom: '1.5rem', letterSpacing: '0.05em' }}>
+                <div style={{ color: 'var(--text-dim)', fontFamily: 'Cascadia Code', fontSize: '0.7rem', marginBottom: '1.5rem', letterSpacing: '0.05em' }}>
                   {exp.period}
                 </div>
 
-                <p style={{ color: 'var(--text-dim)', fontSize: '0.85rem', lineHeight: 1.7, fontFamily: 'JetBrains Mono', flexGrow: 1, marginBottom: '2rem' }}>
+                <p style={{ color: 'var(--text-dim)', fontSize: '0.85rem', lineHeight: 1.7, fontFamily: 'Cascadia Code', flexGrow: 1, marginBottom: '2rem' }}>
                   {exp.description}
                 </p>
 
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem' }}>
+                  {exp.id === 'huaman' && (
+                    <>
+                      <SiDatabricks size={18} color="var(--accent-cyan)" title="Databricks" />
+                      <FaMicrosoft size={18} color="var(--accent-cyan)" title="Azure" />
+                      <SiPython size={18} color="var(--accent-cyan)" title="Python" />
+                    </>
+                  )}
+                  {exp.id === 'biosensors-lab' && (
+                    <>
+                      <SiCplusplus size={18} color="var(--accent-cyan)" title="C++" />
+                    </>
+                  )}
+                </div>
                 <div style={{ display: 'flex', flexWrap: 'wrap' }}>
                   {exp.tags.map(tag => (
                     <span key={tag} className="tag">{tag}</span>
@@ -168,8 +193,8 @@ function App() {
             <h2 className="section-title" style={{ marginBottom: 0 }}>coursework.log</h2>
             <div style={{ display: 'flex', gap: '2rem' }}>
               <div style={{ textAlign: 'right' }}>
-                <div style={{ color: 'var(--accent-cyan)', fontFamily: 'JetBrains Mono', fontSize: '12px', fontWeight: 700 }}>UIUC // CS + BIOE</div>
-                <div style={{ color: 'var(--text-dim)', fontFamily: 'JetBrains Mono', fontSize: '8px' }}>CATALOG_YR: 2024-08</div>
+                <div style={{ color: 'var(--accent-cyan)', fontFamily: 'Cascadia Code', fontSize: '12px', fontWeight: 700 }}>UIUC // CS + BIOE</div>
+                <div style={{ color: 'var(--text-dim)', fontFamily: 'Cascadia Code', fontSize: '8px' }}>CATALOG_YR: 2024-08</div>
               </div>
             </div>
           </div>
@@ -179,7 +204,7 @@ function App() {
               <div key={group.label} className="blueprint-card" style={{ display: 'flex', flexDirection: 'column' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '2rem' }}>
                   <BookOpen size={18} color="var(--accent-cyan)" />
-                  <span style={{ color: 'var(--accent-cyan)', fontFamily: 'JetBrains Mono', fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.1em' }}>
+                  <span style={{ color: 'var(--accent-cyan)', fontFamily: 'Cascadia Code', fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.1em' }}>
                     {group.label}
                   </span>
                 </div>
@@ -187,15 +212,15 @@ function App() {
                   {group.courses.map(course => (
                     <li key={course.code} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: '1rem', borderBottom: '1px dashed rgba(255,255,255,0.05)', paddingBottom: '0.6rem' }}>
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem', minWidth: 0 }}>
-                        <span style={{ color: '#fff', fontFamily: 'JetBrains Mono', fontSize: '0.8rem', fontWeight: 600 }}>
+                        <span style={{ color: '#fff', fontFamily: 'Cascadia Code', fontSize: '0.8rem', fontWeight: 600 }}>
                           {course.code}
                         </span>
-                        <span style={{ color: 'var(--text-dim)', fontSize: '0.75rem', fontFamily: 'JetBrains Mono', lineHeight: 1.4 }}>
+                        <span style={{ color: 'var(--text-dim)', fontSize: '0.75rem', fontFamily: 'Cascadia Code', lineHeight: 1.4 }}>
                           {course.title}
                         </span>
                       </div>
                       {course.inProgress && (
-                        <span style={{ color: 'var(--accent-purple)', fontFamily: 'JetBrains Mono', fontSize: '0.6rem', fontWeight: 700, letterSpacing: '0.15em', whiteSpace: 'nowrap' }}>
+                        <span style={{ color: 'var(--accent-purple)', fontFamily: 'Cascadia Code', fontSize: '0.6rem', fontWeight: 700, letterSpacing: '0.15em', whiteSpace: 'nowrap' }}>
                           [IP]
                         </span>
                       )}
@@ -215,8 +240,8 @@ function App() {
             <h2 className="section-title" style={{ marginBottom: 0 }}>catalog.tar.gz</h2>
             <div style={{ display: 'flex', gap: '2rem' }}>
               <div style={{ textAlign: 'right' }}>
-                <div style={{ color: 'var(--accent-cyan)', fontFamily: 'JetBrains Mono', fontSize: '12px', fontWeight: 700 }}>6 PROJECTS</div>
-                <div style={{ color: 'var(--text-dim)', fontFamily: 'JetBrains Mono', fontSize: '8px' }}>LOC: ILLINOIS_01</div>
+                <div style={{ color: 'var(--accent-cyan)', fontFamily: 'Cascadia Code', fontSize: '12px', fontWeight: 700 }}>6 PROJECTS</div>
+                <div style={{ color: 'var(--text-dim)', fontFamily: 'Cascadia Code', fontSize: '8px' }}>LOC: ILLINOIS_01</div>
               </div>
             </div>
           </div>
@@ -237,7 +262,7 @@ function App() {
               <h3 style={{ fontSize: '3rem', fontWeight: 900, color: '#fff', letterSpacing: '-0.06em', marginBottom: '1.5rem', lineHeight: 1 }}>
                 eof.
               </h3>
-              <p style={{ color: 'var(--text-dim)', fontSize: '0.9rem', maxWidth: '400px', fontFamily: 'JetBrains Mono' }}>
+              <p style={{ color: 'var(--text-dim)', fontSize: '0.9rem', maxWidth: '400px', fontFamily: 'Cascadia Code' }}>
                 Thank you for inspecting my work. I am currently open to high-performance systems and algorithms challenges.
               </p>
             </div>
@@ -245,13 +270,17 @@ function App() {
             <div className="footer-links" style={{ display: 'flex', gap: '5rem' }}>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
                 <span style={{ fontSize: '0.7rem', fontWeight: 800, textTransform: 'uppercase', color: 'var(--accent-cyan)', letterSpacing: '0.2em' }}>Connections</span>
-                <a href="https://github.com/joshuachen6" target="_blank" rel="noopener noreferrer" style={{ color: '#fff', textDecoration: 'none', fontWeight: 700, fontSize: '1.1rem' }}>GitHub</a>
-                <a href="https://www.linkedin.com/in/joshua-chen-b457aa331/" target="_blank" rel="noopener noreferrer" style={{ color: '#fff', textDecoration: 'none', fontWeight: 700, fontSize: '1.1rem' }}>LinkedIn</a>
+                <a href="https://github.com/joshuachen6" target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#fff', textDecoration: 'none', fontWeight: 700, fontSize: '1.1rem' }}>
+                  <SiGithub size={20} /> GitHub
+                </a>
+                <a href="https://www.linkedin.com/in/joshua-chen-b457aa331/" target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#fff', textDecoration: 'none', fontWeight: 700, fontSize: '1.1rem' }}>
+                  <FaLinkedin size={20} color="#0a66c2" /> LinkedIn
+                </a>
               </div>
             </div>
           </div>
           
-          <div className="footer-bottom" style={{ marginTop: '10rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: 'rgba(255,255,255,0.35)', fontSize: '0.7rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.3em', fontFamily: 'JetBrains Mono' }}>
+          <div className="footer-bottom" style={{ marginTop: '10rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: 'rgba(255,255,255,0.35)', fontSize: '0.7rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.3em', fontFamily: 'Cascadia Code' }}>
             <span>&copy; {new Date().getFullYear()} Joshua Chen</span>
             <span>Handcrafted in Illinois</span>
           </div>

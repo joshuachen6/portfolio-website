@@ -1,9 +1,13 @@
+@import '@fontsource/cascadia-code/400.css';
+@import '@fontsource/cascadia-code/600.css';
+@import '@fontsource/cascadia-code/700.css';
+
 :root {
   --bg-color: #020305;
   --accent-cyan: #00f2ff;
   --accent-purple: #9d5cff;
   --text-main: #ffffff;
-  --text-dim: #64748b;
+  --text-dim: #94a3b8;
   --grid-line: rgba(255, 255, 255, 0.12);
   --blueprint-dot: rgba(0, 242, 255, 0.4);
 }
@@ -15,7 +19,7 @@
 }
 
 body {
-  font-family: 'Inter', -apple-system, sans-serif;
+  font-family: 'Cascadia Code', 'Cascadia Mono', 'Consolas', monospace;
   background-color: var(--bg-color);
   color: var(--text-main);
   line-height: 1.6;
@@ -28,7 +32,7 @@ body {
   position: fixed;
   inset: 0;
   z-index: -2;
-  background-image: 
+  background-image:
     linear-gradient(var(--grid-line) 1px, transparent 1px),
     linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
   background-size: 40px 40px;
@@ -87,7 +91,7 @@ body {
   position: absolute;
   top: 10px;
   right: 12px;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: 'Cascadia Code', monospace;
   font-size: 10px;
   color: var(--text-dim);
   opacity: 0.5;
@@ -111,7 +115,7 @@ body {
 .tag {
   display: inline-block;
   padding: 0.3rem 0.6rem;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: 'Cascadia Code', monospace;
   font-size: 0.65rem;
   font-weight: 600;
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -131,7 +135,7 @@ body {
   color: var(--accent-cyan);
   text-decoration: none;
   border: 1px solid var(--accent-cyan);
-  font-family: 'JetBrains Mono', monospace;
+  font-family: 'Cascadia Code', monospace;
   font-weight: 600;
   font-size: 0.85rem;
   transition: all 0.3s ease;
@@ -143,8 +147,6 @@ body {
   color: #000;
   box-shadow: 0 0 20px rgba(0, 242, 255, 0.3);
 }
-
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=JetBrains+Mono:wght@400;600&display=swap');
 
 /* ── Mobile responsive ────────────────────────────────────── */
 
